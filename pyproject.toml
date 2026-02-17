@@ -70,7 +70,7 @@ indent-style = "space"
 [tool.ty.environment]
 python = "./.venv/bin/python"
 python-version = "3.14"
-root = ["./src"]
+root = ["src"]
 
-[tool.ty.src]
-include = ["./src", "./test"]
+[tool.ty.rules]
+all = "error"

@@ -6,6 +6,7 @@
   "python.terminal.activateEnvironment": true,
   "python.languageServer": "None",
   "ty.trace.server": "verbose",
+  "ty.diagnosticMode": "workspace",
   "ruff.nativeServer": "on",
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",

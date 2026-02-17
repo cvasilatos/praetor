@@ -27,11 +27,11 @@ class ValidatorBase:
     def __init__(self, protocol: str) -> None:
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
 
-        self.protocol = protocol
-        self._protocol_info = ProtocolInfo.from_name(protocol)
-        self.scapy_names = self._protocol_info.scapy_names
+        self.protocol: str = protocol
+        self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
+        self.scapy_names: list[str] = self._protocol_info.scapy_names
 
-        override_prefs = {}
+        override_prefs: dict[str, str] = {}
         if self.protocol == "mbtcp":
             override_prefs["mbtcp.tcp.port"] = str(self._protocol_info.port)
 
@@ -104,8 +104,8 @@ class ValidatorBase:
                 error_severity: str = temp_layer.get_field("_ws_severity")
                 raise ValidatorWiresharkError(f"Validation failed, Error: {error_msg} (Group: {error_group}, Severity: {error_severity})", parsed_packet, is_request=is_request)
 
-        layer_names = [layer.layer_name for layer in cast("list[BaseLayer]", parsed_packet.layers)]
-        is_contained = set(self.scapy_names).issubset(set(layer_names))
+        layer_names: list[str] = [layer.layer_name for layer in cast("list[BaseLayer]", parsed_packet.layers)]
+        is_contained: bool = set(self.scapy_names).issubset(set(layer_names))
         if not is_contained:
             raise ValidatorError(f"Validation failed, no layer '{self.scapy_names}'", parsed_packet, is_request=is_request)
 
