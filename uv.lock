@@ -578,6 +578,32 @@ wheels = [
 ]
 
 [[package]]
+name = "logger-captain"
+version = "0.1.0"
+source = { path = "../logger-captain/dist/logger_captain-0.1.0-py3-none-any.whl" }
+dependencies = [
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pyright" },
+    { name = "readmeai" },
+    { name = "ruff" },
+    { name = "ty" },
+]
+wheels = [
+    { filename = "logger_captain-0.1.0-py3-none-any.whl", hash = "sha256:357c40dfa75f7cf835969d9d58bfc93f2fe27f78852f79d720b5d3b620885cd1" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pyright" },
+    { name = "readmeai" },
+    { name = "ruff" },
+    { name = "ty", specifier = ">=0.0.17" },
+]
+
+[[package]]
 name = "lxml"
 version = "6.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -954,12 +980,40 @@ wheels = [
 ]
 
 [[package]]
+name = "protocol-server"
+version = "0.1.0"
+source = { path = "../protocol-server/dist/protocol_server-0.1.0-py3-none-any.whl" }
+dependencies = [
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pymodbus" },
+    { name = "pyright" },
+    { name = "readmeai" },
+    { name = "ruff" },
+]
+wheels = [
+    { filename = "protocol_server-0.1.0-py3-none-any.whl", hash = "sha256:bbb93f16c31a1608c74aead03597cf9caa4e285dfe3d0af52c406773856c9672" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pymodbus", specifier = ">=3.12.0" },
+    { name = "pyright" },
+    { name = "readmeai" },
+    { name = "ruff" },
+]
+
+[[package]]
 name = "protocol-validator"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "logger-captain" },
     { name = "mypy" },
     { name = "pre-commit" },
+    { name = "protocol-server" },
     { name = "pyright" },
     { name = "pyshark" },
     { name = "readmeai" },
@@ -971,8 +1025,10 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "logger-captain", path = "../logger-captain/dist/logger_captain-0.1.0-py3-none-any.whl" },
     { name = "mypy" },
     { name = "pre-commit" },
+    { name = "protocol-server", path = "../protocol-server/dist/protocol_server-0.1.0-py3-none-any.whl" },
     { name = "pyright" },
     { name = "pyshark", specifier = ">=0.6" },
     { name = "readmeai" },
@@ -1102,6 +1158,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/21/db/030d0700ae90d2f9d52c2f3c1f864881e19cef8cba3b0a08759c8494c19c/PyDispatcher-2.0.7.tar.gz", hash = "sha256:b777c6ad080dc1bad74a4c29d6a46914fa6701ac70f94b0d66fbcfde62f5be31", size = 38891, upload-time = "2023-02-17T20:11:13.106Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/66/0e/9ee7bc0b48ec45d93b302fa2d787830dca4dc454d31a237faa5815995988/PyDispatcher-2.0.7-py3-none-any.whl", hash = "sha256:96543bea04115ffde08f851e1d45cacbfd1ee866ac42127d9b476dc5aefa7de0", size = 12040, upload-time = "2023-02-17T20:11:11.991Z" },
+]
+
+[[package]]
+name = "pymodbus"
+version = "3.12.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/41/dc/8db192f3a66032e1bd900eb87b5bbcb539d5118f520372af0cb92ba42499/pymodbus-3.12.0.tar.gz", hash = "sha256:3fafe85e5d82bb9bcbda14b97a0e69a47dc46be55631e9f988adfaf95140c44b", size = 166075, upload-time = "2026-02-08T22:13:14.623Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/52/34/425cc4cd1ca9650498d74cec48582ecca204db9c9a5de514502738b3ec1d/pymodbus-3.12.0-py3-none-any.whl", hash = "sha256:fff8d216a0977b2e7c10796f6b1a90fefbf88d4cc598dee7dff21d383870ca7c", size = 167829, upload-time = "2026-02-08T22:13:11.981Z" },
 ]
 
 [[package]]

@@ -2,13 +2,13 @@ import logging
 import random
 from typing import TYPE_CHECKING, cast
 
+from pyshark.packet.packet import Packet
+
 if TYPE_CHECKING:
+    from logger_captain.logger import CustomLogger
     from pyshark.packet.layers.base import BaseLayer
     from pyshark.packet.layers.json_layer import JsonLayer
-    from pyshark.packet.packet import Packet
     from scapy.packet import Packet as ScapyPacket
-
-    from protocol_validator.cfg.log_configuration import CustomLogger
 
 from concurrent.futures import ThreadPoolExecutor
 

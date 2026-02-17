@@ -3,7 +3,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-    from protocol_validator.cfg.log_configuration import CustomLogger
+    from logger_captain.logger import CustomLogger
 
 
 class ProtocolInfo(Enum):

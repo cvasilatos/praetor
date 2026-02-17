@@ -3,9 +3,8 @@ import random
 from typing import TYPE_CHECKING, cast
 
 import pyshark
+from logger_captain.logger import CustomLogger
 from pyshark.packet.layers.base import BaseLayer
-
-from protocol_validator.cfg.log_configuration import CustomLogger
 
 if TYPE_CHECKING:
     from pyshark.packet.packet import Packet
@@ -51,12 +50,12 @@ class ValidatorBase:
         payload_bytes: bytes = bytes.fromhex(packet)
         payload_len: int = len(payload_bytes)
 
-        seq = self._tcp_seq
-        ack = self._tcp_ack
+        seq: int = self._tcp_seq
+        ack: int = self._tcp_ack
 
-        step = max(1, payload_len)
-        next_seq = (seq + step) % (2**32)
-        next_ack = (ack + step) % (2**32)
+        step: int = max(1, payload_len)
+        next_seq: int = (seq + step) % (2**32)
+        next_ack: int = (ack + step) % (2**32)
 
         self._next_tcp_seq = next_seq
         self._next_tcp_ack = next_ack
