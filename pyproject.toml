@@ -22,6 +22,7 @@ dependencies = [
     "scapy>=2.7.0",
     "pyshark>=0.6",
     "ty>=0.0.17",
+    "tool>=0.8.0",
 ]
 
 [tool.uv]
@@ -69,4 +70,7 @@ indent-style = "space"
 [tool.ty.environment]
 python = "./.venv/bin/python"
 python-version = "3.14"
-root = ["src"]
+root = ["./src"]
+
+[tool.ty.src]
+include = ["./src", "./test"]

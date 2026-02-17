@@ -5,9 +5,10 @@ from typing import TYPE_CHECKING, cast
 import pyshark
 
 if TYPE_CHECKING:
-    from cfg.log_configuration import CustomLogger
     from pyshark.packet.layers.base import BaseLayer
     from pyshark.packet.packet import Packet
+
+    from protocol_validator.cfg.log_configuration import CustomLogger
 
 
 import argparse
