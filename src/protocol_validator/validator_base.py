@@ -3,12 +3,12 @@ import random
 from typing import TYPE_CHECKING, cast
 
 import pyshark
+from pyshark.packet.layers.base import BaseLayer
+
+from protocol_validator.cfg.log_configuration import CustomLogger
 
 if TYPE_CHECKING:
-    from pyshark.packet.layers.base import BaseLayer
     from pyshark.packet.packet import Packet
-
-    from protocol_validator.cfg.log_configuration import CustomLogger
 
 
 import argparse
@@ -37,19 +37,19 @@ class ValidatorBase:
 
         self._cap = pyshark.InMemCapture(override_prefs=override_prefs, custom_parameters={"-o": "tcp.analyze_sequence_numbers:FALSE"})
 
-        self._tcp_seq = 0
-        self._tcp_ack = 0
+        self._tcp_seq: int = 0
+        self._tcp_ack: int = 0
 
-        self._next_tcp_seq = 1
-        self._next_tcp_ack = 1
+        self._next_tcp_seq: int = 1
+        self._next_tcp_ack: int = 1
 
     def __del__(self) -> None:
         if self._cap:
             self._cap.close()
 
     def validate(self, packet: str, *, is_request: bool) -> BaseLayer:
-        payload_bytes = bytes.fromhex(packet)
-        payload_len = len(payload_bytes)
+        payload_bytes: bytes = bytes.fromhex(packet)
+        payload_len: int = len(payload_bytes)
 
         seq = self._tcp_seq
         ack = self._tcp_ack
@@ -121,11 +121,12 @@ if __name__ == "__main__":
     group: argparse._MutuallyExclusiveGroup = parser.add_mutually_exclusive_group()
     group.add_argument("-r", "--request", action="store_true", help="Treat packet as request (default)")
     group.add_argument("-s", "--response", action="store_true", help="Treat packet as response")
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
 
+    CustomLogger.setup_logging("logs", "protocol_validator", level="TRACE")
     validator = ValidatorBase(args.protocol)
     index = 0
-    for _ in range(1000):
+    for _ in range(5):
         try:
             index += 1
             pdu: BaseLayer = validator.validate(args.packet, is_request=not args.response)

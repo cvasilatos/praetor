@@ -1,0 +1,476 @@
+2026-02-17 21:47:58,758 - [DEBUG] - asyncio - Using selector: KqueueSelector
+2026-02-17 21:47:58,903 - [DEBUG] - __main__.V - Validating packet (is_request=True): 001122334466001122334455080045000034000100004006f754c0a8010ac0a80114cbd301f60000000000000000501820003d7c0000000100000006010300000002
+2026-02-17 21:47:58,903 - [DEBUG] - __main__.V - Validate protocol related layer (is_request=True): [1m[33mLayer MBTCP
+:[0m[1m[32m	Transaction Identifier:[0m[1m 1
+[0m[1m[32m	Protocol Identifier:[0m[1m 0
+[0m[1m[32m	Length:[0m[1m 6
+[0m[1m[32m	Unit Identifier:[0m[1m 1
+[0m
+2026-02-17 21:47:58,903 - [DEBUG] - __main__.V - Validate protocol related layer (is_request=True): [1m[33mLayer MODBUS
+:[0m[1m[32m	0... .... = Exception:[0m[1m No
+[0m[1m[32m	.000 0011 = Function Code:[0m[1m Read Holding Registers (3)
+[0m[1m[32m	Reference Number:[0m[1m 0
+[0m[1m[32m	Word Count:[0m[1m 2
+[0m
+2026-02-17 21:47:58,903 - [TRACE] - __main__.V - Validation successful for packet True: Packet (Length: 66)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 00:11:22:33:44:66
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 00:11:22:33:44:55
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 52
+[0m[1m[32m	Identification:[0m[1m 0x0001 (1)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 64
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0xf754 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 192.168.1.10
+[0m[1m[32m	Destination Address:[0m[1m 192.168.1.20
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 52179
+[0m[1m[32m	Destination Port:[0m[1m 502
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (0)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 0... = Data:[0m[1m Absent
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m [ Null ]
+[0m[1m[32m	TCP Segment Len:[0m[1m 12
+[0m[1m[32m	Sequence Number:[0m[1m 0
+[0m[1m[32m	Next Sequence Number:[0m[1m 12
+[0m[1m[32m	Acknowledgment Number:[0m[1m 0
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 8192
+[0m[1m[32m	Calculated window size:[0m[1m 8192
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x3d7c [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m	TCP payload (12 bytes)
+[0m[1m[32m	PDU Size:[0m[1m 12
+[0m[1m[33mLayer MBTCP
+:[0m[1m[32m	Transaction Identifier:[0m[1m 1
+[0m[1m[32m	Protocol Identifier:[0m[1m 0
+[0m[1m[32m	Length:[0m[1m 6
+[0m[1m[32m	Unit Identifier:[0m[1m 1
+[0m[1m[33mLayer MODBUS
+:[0m[1m[32m	0... .... = Exception:[0m[1m No
+[0m[1m[32m	.000 0011 = Function Code:[0m[1m Read Holding Registers (3)
+[0m[1m[32m	Reference Number:[0m[1m 0
+[0m[1m[32m	Word Count:[0m[1m 2
+[0m
+2026-02-17 21:47:58,905 - [DEBUG] - __main__.V - Validating packet (is_request=True): 001122334466001122334455080045000034000100004006f754c0a8010ac0a80114044301f60000000c0000000c5018200004f50000000100000006010300000002
+2026-02-17 21:47:58,905 - [DEBUG] - __main__.V - Validate protocol related layer (is_request=True): [1m[33mLayer MBTCP
+:[0m[1m[32m	Transaction Identifier:[0m[1m 1
+[0m[1m[32m	Protocol Identifier:[0m[1m 0
+[0m[1m[32m	Length:[0m[1m 6
+[0m[1m[32m	Unit Identifier:[0m[1m 1
+[0m
+2026-02-17 21:47:58,905 - [DEBUG] - __main__.V - Validate protocol related layer (is_request=True): [1m[33mLayer MODBUS
+:[0m[1m[32m	0... .... = Exception:[0m[1m No
+[0m[1m[32m	.000 0011 = Function Code:[0m[1m Read Holding Registers (3)
+[0m[1m[32m	Reference Number:[0m[1m 0
+[0m[1m[32m	Word Count:[0m[1m 2
+[0m
+2026-02-17 21:47:58,906 - [TRACE] - __main__.V - Validation successful for packet True: Packet (Length: 66)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 00:11:22:33:44:66
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 00:11:22:33:44:55
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 52
+[0m[1m[32m	Identification:[0m[1m 0x0001 (1)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 64
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0xf754 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 192.168.1.10
+[0m[1m[32m	Destination Address:[0m[1m 192.168.1.20
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 1091
+[0m[1m[32m	Destination Port:[0m[1m 502
+[0m[1m[32m	Stream index:[0m[1m 1
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (0)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 0... = Data:[0m[1m Absent
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m [ Null ]
+[0m[1m[32m	TCP Segment Len:[0m[1m 12
+[0m[1m[32m	Sequence Number:[0m[1m 12
+[0m[1m[32m	Next Sequence Number:[0m[1m 24
+[0m[1m[32m	Acknowledgment Number:[0m[1m 12
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 8192
+[0m[1m[32m	Calculated window size:[0m[1m 8192
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0x04f5 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m	TCP payload (12 bytes)
+[0m[1m[32m	PDU Size:[0m[1m 12
+[0m[1m[33mLayer MBTCP
+:[0m[1m[32m	Transaction Identifier:[0m[1m 1
+[0m[1m[32m	Protocol Identifier:[0m[1m 0
+[0m[1m[32m	Length:[0m[1m 6
+[0m[1m[32m	Unit Identifier:[0m[1m 1
+[0m[1m[33mLayer MODBUS
+:[0m[1m[32m	0... .... = Exception:[0m[1m No
+[0m[1m[32m	.000 0011 = Function Code:[0m[1m Read Holding Registers (3)
+[0m[1m[32m	Reference Number:[0m[1m 0
+[0m[1m[32m	Word Count:[0m[1m 2
+[0m
+2026-02-17 21:47:58,907 - [DEBUG] - __main__.V - Validating packet (is_request=True): 001122334466001122334455080045000034000100004006f754c0a8010ac0a8011463f601f6000000180000001850182000a5290000000100000006010300000002
+2026-02-17 21:47:58,908 - [DEBUG] - __main__.V - Validate protocol related layer (is_request=True): [1m[33mLayer MBTCP
+:[0m[1m[32m	Transaction Identifier:[0m[1m 1
+[0m[1m[32m	Protocol Identifier:[0m[1m 0
+[0m[1m[32m	Length:[0m[1m 6
+[0m[1m[32m	Unit Identifier:[0m[1m 1
+[0m
+2026-02-17 21:47:58,908 - [DEBUG] - __main__.V - Validate protocol related layer (is_request=True): [1m[33mLayer MODBUS
+:[0m[1m[32m	0... .... = Exception:[0m[1m No
+[0m[1m[32m	.000 0011 = Function Code:[0m[1m Read Holding Registers (3)
+[0m[1m[32m	Reference Number:[0m[1m 0
+[0m[1m[32m	Word Count:[0m[1m 2
+[0m
+2026-02-17 21:47:58,908 - [TRACE] - __main__.V - Validation successful for packet True: Packet (Length: 66)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 00:11:22:33:44:66
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 00:11:22:33:44:55
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 52
+[0m[1m[32m	Identification:[0m[1m 0x0001 (1)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 64
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0xf754 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 192.168.1.10
+[0m[1m[32m	Destination Address:[0m[1m 192.168.1.20
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 25590
+[0m[1m[32m	Destination Port:[0m[1m 502
+[0m[1m[32m	Stream index:[0m[1m 2
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (0)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 0... = Data:[0m[1m Absent
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m [ Null ]
+[0m[1m[32m	TCP Segment Len:[0m[1m 12
+[0m[1m[32m	Sequence Number:[0m[1m 24
+[0m[1m[32m	Next Sequence Number:[0m[1m 36
+[0m[1m[32m	Acknowledgment Number:[0m[1m 24
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 8192
+[0m[1m[32m	Calculated window size:[0m[1m 8192
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0xa529 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m	TCP payload (12 bytes)
+[0m[1m[32m	PDU Size:[0m[1m 12
+[0m[1m[33mLayer MBTCP
+:[0m[1m[32m	Transaction Identifier:[0m[1m 1
+[0m[1m[32m	Protocol Identifier:[0m[1m 0
+[0m[1m[32m	Length:[0m[1m 6
+[0m[1m[32m	Unit Identifier:[0m[1m 1
+[0m[1m[33mLayer MODBUS
+:[0m[1m[32m	0... .... = Exception:[0m[1m No
+[0m[1m[32m	.000 0011 = Function Code:[0m[1m Read Holding Registers (3)
+[0m[1m[32m	Reference Number:[0m[1m 0
+[0m[1m[32m	Word Count:[0m[1m 2
+[0m
+2026-02-17 21:47:58,910 - [DEBUG] - __main__.V - Validating packet (is_request=True): 001122334466001122334455080045000034000100004006f754c0a8010ac0a801145d1601f6000000240000002450182000abf10000000100000006010300000002
+2026-02-17 21:47:58,910 - [DEBUG] - __main__.V - Validate protocol related layer (is_request=True): [1m[33mLayer MBTCP
+:[0m[1m[32m	Transaction Identifier:[0m[1m 1
+[0m[1m[32m	Protocol Identifier:[0m[1m 0
+[0m[1m[32m	Length:[0m[1m 6
+[0m[1m[32m	Unit Identifier:[0m[1m 1
+[0m
+2026-02-17 21:47:58,910 - [DEBUG] - __main__.V - Validate protocol related layer (is_request=True): [1m[33mLayer MODBUS
+:[0m[1m[32m	0... .... = Exception:[0m[1m No
+[0m[1m[32m	.000 0011 = Function Code:[0m[1m Read Holding Registers (3)
+[0m[1m[32m	Reference Number:[0m[1m 0
+[0m[1m[32m	Word Count:[0m[1m 2
+[0m
+2026-02-17 21:47:58,910 - [TRACE] - __main__.V - Validation successful for packet True: Packet (Length: 66)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 00:11:22:33:44:66
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 00:11:22:33:44:55
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 52
+[0m[1m[32m	Identification:[0m[1m 0x0001 (1)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 64
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0xf754 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 192.168.1.10
+[0m[1m[32m	Destination Address:[0m[1m 192.168.1.20
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 23830
+[0m[1m[32m	Destination Port:[0m[1m 502
+[0m[1m[32m	Stream index:[0m[1m 3
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (0)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 0... = Data:[0m[1m Absent
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m [ Null ]
+[0m[1m[32m	TCP Segment Len:[0m[1m 12
+[0m[1m[32m	Sequence Number:[0m[1m 36
+[0m[1m[32m	Next Sequence Number:[0m[1m 48
+[0m[1m[32m	Acknowledgment Number:[0m[1m 36
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 8192
+[0m[1m[32m	Calculated window size:[0m[1m 8192
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0xabf1 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m	TCP payload (12 bytes)
+[0m[1m[32m	PDU Size:[0m[1m 12
+[0m[1m[33mLayer MBTCP
+:[0m[1m[32m	Transaction Identifier:[0m[1m 1
+[0m[1m[32m	Protocol Identifier:[0m[1m 0
+[0m[1m[32m	Length:[0m[1m 6
+[0m[1m[32m	Unit Identifier:[0m[1m 1
+[0m[1m[33mLayer MODBUS
+:[0m[1m[32m	0... .... = Exception:[0m[1m No
+[0m[1m[32m	.000 0011 = Function Code:[0m[1m Read Holding Registers (3)
+[0m[1m[32m	Reference Number:[0m[1m 0
+[0m[1m[32m	Word Count:[0m[1m 2
+[0m
+2026-02-17 21:47:58,912 - [DEBUG] - __main__.V - Validating packet (is_request=True): 001122334466001122334455080045000034000100004006f754c0a8010ac0a801141fed01f6000000300000003050182000e9020000000100000006010300000002
+2026-02-17 21:47:58,912 - [DEBUG] - __main__.V - Validate protocol related layer (is_request=True): [1m[33mLayer MBTCP
+:[0m[1m[32m	Transaction Identifier:[0m[1m 1
+[0m[1m[32m	Protocol Identifier:[0m[1m 0
+[0m[1m[32m	Length:[0m[1m 6
+[0m[1m[32m	Unit Identifier:[0m[1m 1
+[0m
+2026-02-17 21:47:58,912 - [DEBUG] - __main__.V - Validate protocol related layer (is_request=True): [1m[33mLayer MODBUS
+:[0m[1m[32m	0... .... = Exception:[0m[1m No
+[0m[1m[32m	.000 0011 = Function Code:[0m[1m Read Holding Registers (3)
+[0m[1m[32m	Reference Number:[0m[1m 0
+[0m[1m[32m	Word Count:[0m[1m 2
+[0m
+2026-02-17 21:47:58,913 - [TRACE] - __main__.V - Validation successful for packet True: Packet (Length: 66)
+[1m[33mLayer ETH
+:[0m[1m[32m	Destination:[0m[1m 00:11:22:33:44:66
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Source:[0m[1m 00:11:22:33:44:55
+[0m[1m[32m	.... ..0. .... .... .... .... = LG bit:[0m[1m Globally unique address (factory default)
+[0m[1m[32m	.... ...0 .... .... .... .... = IG bit:[0m[1m Individual address (unicast)
+[0m[1m[32m	Type:[0m[1m IPv4 (0x0800)
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer IP
+:[0m[1m[32m	0100 .... = Version:[0m[1m 4
+[0m[1m[32m	.... 0101 = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Differentiated Services Field:[0m[1m 0x00 (DSCP: CS0, ECN: Not-ECT)
+[0m[1m[32m	0000 00.. = Differentiated Services Codepoint:[0m[1m Default (0)
+[0m[1m[32m	.... ..00 = Explicit Congestion Notification:[0m[1m Not ECN-Capable Transport (0)
+[0m[1m[32m	Total Length:[0m[1m 52
+[0m[1m[32m	Identification:[0m[1m 0x0001 (1)
+[0m[1m[32m	000. .... = Flags:[0m[1m 0x0
+[0m[1m[32m	0... .... = Reserved bit:[0m[1m Not set
+[0m[1m[32m	.0.. .... = Don't fragment:[0m[1m Not set
+[0m[1m[32m	..0. .... = More fragments:[0m[1m Not set
+[0m[1m[32m	...0 0000 0000 0000 = Fragment Offset:[0m[1m 0
+[0m[1m[32m	Time to Live:[0m[1m 64
+[0m[1m[32m	Protocol:[0m[1m TCP (6)
+[0m[1m[32m	Header Checksum:[0m[1m 0xf754 [validation disabled]
+[0m[1m[32m	Header checksum status:[0m[1m Unverified
+[0m[1m[32m	Source Address:[0m[1m 192.168.1.10
+[0m[1m[32m	Destination Address:[0m[1m 192.168.1.20
+[0m[1m[32m	Stream index:[0m[1m 0
+[0m[1m[33mLayer TCP
+:[0m[1m[32m	Source Port:[0m[1m 8173
+[0m[1m[32m	Destination Port:[0m[1m 502
+[0m[1m[32m	Stream index:[0m[1m 4
+[0m[1m[32m	Stream Packet Number:[0m[1m 1
+[0m[1m[32m	Conversation completeness:[0m[1m Incomplete (0)
+[0m[1m[32m	..0. .... = RST:[0m[1m Absent
+[0m[1m[32m	...0 .... = FIN:[0m[1m Absent
+[0m[1m[32m	.... 0... = Data:[0m[1m Absent
+[0m[1m[32m	.... .0.. = ACK:[0m[1m Absent
+[0m[1m[32m	.... ..0. = SYN-ACK:[0m[1m Absent
+[0m[1m[32m	.... ...0 = SYN:[0m[1m Absent
+[0m[1m[32m	Completeness Flags:[0m[1m [ Null ]
+[0m[1m[32m	TCP Segment Len:[0m[1m 12
+[0m[1m[32m	Sequence Number:[0m[1m 48
+[0m[1m[32m	Next Sequence Number:[0m[1m 60
+[0m[1m[32m	Acknowledgment Number:[0m[1m 48
+[0m[1m[32m	0101 .... = Header Length:[0m[1m 20 bytes (5)
+[0m[1m[32m	Flags:[0m[1m 0x018 (PSH, ACK)
+[0m[1m[32m	000. .... .... = Reserved:[0m[1m Not set
+[0m[1m[32m	...0 .... .... = Accurate ECN:[0m[1m Not set
+[0m[1m[32m	.... 0... .... = Congestion Window Reduced:[0m[1m Not set
+[0m[1m[32m	.... .0.. .... = ECN-Echo:[0m[1m Not set
+[0m[1m[32m	.... ..0. .... = Urgent:[0m[1m Not set
+[0m[1m[32m	.... ...1 .... = Acknowledgment:[0m[1m Set
+[0m[1m[32m	.... .... 1... = Push:[0m[1m Set
+[0m[1m[32m	.... .... .0.. = Reset:[0m[1m Not set
+[0m[1m[32m	.... .... ..0. = Syn:[0m[1m Not set
+[0m[1m[32m	.... .... ...0 = Fin:[0m[1m Not set
+[0m[1m[32m	TCP Flags:[0m[1m ·······AP···
+[0m[1m[32m	Window:[0m[1m 8192
+[0m[1m[32m	Calculated window size:[0m[1m 8192
+[0m[1m[32m	Window size scaling factor:[0m[1m -1 (unknown)
+[0m[1m[32m	Checksum:[0m[1m 0xe902 [unverified]
+[0m[1m[32m	Checksum Status:[0m[1m Unverified
+[0m[1m[32m	Urgent Pointer:[0m[1m 0
+[0m[1m	Timestamps
+[0m[1m[32m	Time since first frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m[32m	Time since previous frame in this TCP stream:[0m[1m 0.000000000 seconds
+[0m[1m	TCP payload (12 bytes)
+[0m[1m[32m	PDU Size:[0m[1m 12
+[0m[1m[33mLayer MBTCP
+:[0m[1m[32m	Transaction Identifier:[0m[1m 1
+[0m[1m[32m	Protocol Identifier:[0m[1m 0
+[0m[1m[32m	Length:[0m[1m 6
+[0m[1m[32m	Unit Identifier:[0m[1m 1
+[0m[1m[33mLayer MODBUS
+:[0m[1m[32m	0... .... = Exception:[0m[1m No
+[0m[1m[32m	.000 0011 = Function Code:[0m[1m Read Holding Registers (3)
+[0m[1m[32m	Reference Number:[0m[1m 0
+[0m[1m[32m	Word Count:[0m[1m 2
+[0m

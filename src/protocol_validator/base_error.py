@@ -1,7 +1,4 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from scapy.packet import Packet
+from scapy.packet import Packet
 
 
 class BaseError(ValueError):
