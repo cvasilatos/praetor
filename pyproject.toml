@@ -1,0 +1,84 @@
+#:schema https://json.schemastore.org/pyproject.json
+#:schmea https://json.schemastore.org/ruff.json
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/protocol_validator"]
+
+[project]
+name = "protocol_validator"
+version = "0.1.0"
+description = ""
+requires-python = ">=3.14"
+dependencies = [
+    "ruff",
+    "mypy",
+    "pyright",
+    "readmeai",
+    "pre-commit",
+    "scapy>=2.7.0",
+    "pyshark>=0.6",
+]
+
+[tool.uv]
+managed = true
+
+[tool.ruff]
+line-length = 180
+target-version = "py314"
+exclude = [".git", ".mypy_cache", ".ruff_cache", "node_modules", "venv", ".venv"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "PLR0913",
+    "PLR2004",
+    "G004",
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D105",
+    "D107",
+    "INP001",
+    "ANN401",
+    "COM812",
+    "TRY003",
+    "EM101",
+    "EM102",
+    "BLE001",
+    "T201",
+    "S311",
+    "C408",
+    "S101",
+    "PERF203",
+]
+unfixable = ["F401"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+warn_no_return = true
+show_error_codes = true
+explicit_package_bases = true
+
+[tool.pyright]
+stubPath = "typings"
+include = ["."]
+typeCheckingMode = "strict"
+exclude = [".git", ".mypy_cache", "**/__pycache__", ".ruff_cache", "node_modules", "venv", ".venv"]
+ignore = ["**/pyshark/**"]
+extraPaths = ["src", "test"]
