@@ -1,5 +1,9 @@
 import logging
 from enum import Enum
+from typing import TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    from cfg.log_configuration import CustomLogger
 
 
 class ProtocolInfo(Enum):
@@ -13,28 +17,30 @@ class ProtocolInfo(Enum):
     ADS = ("ads", 48898, 48898, ["ams"])
 
     def __init__(self, name: str, port: int, custom_port: int, scapy_names: list[str]) -> None:
-        logger_name = f"{self.__class__.__module__}.{self.__class__.__name__}"
-        self.logger = logging.getLogger(logger_name)
-        self._name = name
-        self._port = port
-        self._custom_port = custom_port
-        self._scapy_names = scapy_names
+        self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
+        self._name: str = name
+        self._port: int = port
+        self._custom_port: int = custom_port
+        self._scapy_names: list[str] = scapy_names
 
     @property
     def protocol_name(self) -> str:
         return self._name
+
     @property
     def port(self) -> int:
         return self._port
+
     @property
     def custom_port(self) -> int:
         return self._custom_port
+
     @property
     def scapy_names(self) -> list[str]:
         return self._scapy_names
 
     @classmethod
-    def from_name(cls, name: str) -> "ProtocolInfo":
+    def from_name(cls, name: str) -> ProtocolInfo:
         name_lower = name.lower()
         for member in cls:
             if member.protocol_name.lower() == name_lower or member.name.lower() == name_lower:

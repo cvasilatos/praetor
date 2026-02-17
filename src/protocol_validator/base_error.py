@@ -1,11 +1,14 @@
-from scapy.packet import Packet
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from scapy.packet import Packet
 
 
 class BaseError(ValueError):
     def __init__(self, message: str, pdu: Packet, *, is_request: bool) -> None:
         super().__init__(message)
-        self._pdu = pdu
-        self._is_request = is_request
+        self._pdu: Packet = pdu
+        self._is_request: bool = is_request
 
     @property
     def pdu(self) -> Packet:

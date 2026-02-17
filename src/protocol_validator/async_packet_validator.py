@@ -1,17 +1,17 @@
 import logging
 import random
 from typing import TYPE_CHECKING, cast
-import scapy
-import scapy.packet
 
 if TYPE_CHECKING:
+    from pyshark.packet.layers.base import BaseLayer
     from pyshark.packet.layers.json_layer import JsonLayer
+    from pyshark.packet.packet import Packet
+    from scapy.packet import Packet as ScapyPacket
 
     from protocol_validator.cfg.log_configuration import CustomLogger
 
 from concurrent.futures import ThreadPoolExecutor
 
-from pyshark.packet.packet import Packet
 from pyshark.capture.inmem_capture import InMemCapture
 from scapy.all import Raw
 from scapy.layers.inet import IP, TCP, UDP
@@ -24,20 +24,20 @@ from protocol_validator.validator_wireshark_error import ValidatorWiresharkError
 
 class AsyncPacketValidator:
     def __init__(self, protocol: str) -> None:
-        self.logger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
+        self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
 
-        self._protocol = protocol
-        self._protocol_info = ProtocolInfo.from_name(protocol)
+        self._protocol: str = protocol
+        self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
 
         self._override_prefs: dict[str, str] = {}
         if self._protocol == "mbtcp":
             self._override_prefs["mbtcp.tcp.port"] = str(self._protocol_info.port)
 
-        self._tcp_seq = 0
-        self._tcp_ack = 0
+        self._tcp_seq: int = 0
+        self._tcp_ack: int = 0
 
-        self._next_tcp_seq = 1
-        self._next_tcp_ack = 1
+        self._next_tcp_seq: int = 1
+        self._next_tcp_ack: int = 1
 
         self._executor = ThreadPoolExecutor(max_workers=1)
 
@@ -59,7 +59,7 @@ class AsyncPacketValidator:
         self._next_tcp_seq = next_seq
         self._next_tcp_ack = next_ack
 
-        tcp_layer: scapy.packet.Packet
+        tcp_layer: ScapyPacket
         if is_request:
             if self._protocol == "bacnet":
                 tcp_layer = UDP(sport=47808, dport=self._protocol_info.port)
@@ -80,12 +80,7 @@ class AsyncPacketValidator:
                 ack=ack,
             )
 
-        full_packet = (
-            Ether(src="00:11:22:33:44:55", dst="00:11:22:33:44:66")
-            / IP(src="192.168.1.10", dst="192.168.1.20")
-            / tcp_layer
-            / Raw(load=payload_bytes)
-        )
+        full_packet = Ether(src="00:11:22:33:44:55", dst="00:11:22:33:44:66") / IP(src="192.168.1.10", dst="192.168.1.20") / tcp_layer / Raw(load=payload_bytes)
 
         cap = InMemCapture(override_prefs=self._override_prefs)
         parsed_packet: Packet = cap.parse_packet(bytes(full_packet))
@@ -100,19 +95,16 @@ class AsyncPacketValidator:
             if layer.layer_name not in {"tcp", "eth", "ip"}:
                 self.logger.trace(f"Validate protocol related layer (is_request={is_request}): {layer}")
 
-        error_msg: str = ""
-        error_group: str = ""
-        error_severity: str = ""
         temp_layer: JsonLayer
         for temp_layer in parsed_packet.layers:
             if temp_layer.get_field("_ws_expert"):
-                error_msg = temp_layer.get_field("_ws_expert_message")
-                error_group = temp_layer.get_field("_ws_group")
-                error_severity = temp_layer.get_field("_ws_severity")
+                error_msg: str = temp_layer.get_field("_ws_expert_message")
+                error_group: str = temp_layer.get_field("_ws_group")
+                error_severity: str = temp_layer.get_field("_ws_severity")
                 raise ValidatorWiresharkError(f"Validation failed, Error: {error_msg} (Group: {error_group}, Severity: {error_severity})", parsed_packet, is_request=is_request)
 
-        layer_names = [layer.layer_name for layer in cast("list[JsonLayer]", parsed_packet.layers)]
-        is_contained = set(self._protocol_info.scapy_names).issubset(set(layer_names))
+        layer_names: list[BaseLayer] = [layer.layer_name for layer in cast("list[BaseLayer]", parsed_packet.layers)]
+        is_contained: bool = set(self._protocol_info.scapy_names).issubset(set(layer_names))
         if not is_contained:
             raise ValidatorError(f"Validation failed, no layer '{self._protocol_info.scapy_names}'", parsed_packet, is_request=is_request)
 

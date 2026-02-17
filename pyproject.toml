@@ -21,6 +21,7 @@ dependencies = [
     "pre-commit",
     "scapy>=2.7.0",
     "pyshark>=0.6",
+    "ty>=0.0.17",
 ]
 
 [tool.uv]
@@ -65,20 +66,7 @@ combine-as-imports = true
 quote-style = "double"
 indent-style = "space"
 
-[tool.mypy]
-python_version = "3.14"
-strict = true
-ignore_missing_imports = true
-disallow_untyped_defs = true
-check_untyped_defs = true
-warn_no_return = true
-show_error_codes = true
-explicit_package_bases = true
-
-[tool.pyright]
-stubPath = "typings"
-include = ["."]
-typeCheckingMode = "strict"
-exclude = [".git", ".mypy_cache", "**/__pycache__", ".ruff_cache", "node_modules", "venv", ".venv"]
-ignore = ["**/pyshark/**"]
-extraPaths = ["src", "test"]
+[tool.ty.environment]
+python = "./.venv/bin/python"
+python-version = "3.14"
+root = ["src"]
