@@ -40,7 +40,7 @@ class ProtocolInfo(Enum):
         return self._scapy_names
 
     @classmethod
-    def from_name(cls, name: str) -> ProtocolInfo:
+    def from_name(cls, name: str) -> "ProtocolInfo":
         name_lower = name.lower()
         for member in cls:
             if member.protocol_name.lower() == name_lower or member.name.lower() == name_lower:
