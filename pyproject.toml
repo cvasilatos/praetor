@@ -6,10 +6,10 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/protocol_validator"]
+packages = ["src/praetor"]
 
 [project]
-name = "protocol_validator"
+name = "praetor"
 version = "0.1.0"
 description = ""
 requires-python = ">=3.12"
@@ -23,16 +23,16 @@ dependencies = [
     "pyshark>=0.6",
     "ty>=0.0.17",
     "tool>=0.8.0",
-    "protocol-server",
-    "logger-captain",
+    "decimalog",
+    "cursusd",
 ]
 
 [tool.uv]
 managed = true
 
 [tool.uv.sources]
-protocol-server = { path = "../protocol-server/dist/protocol_server-0.1.0-py3-none-any.whl" }
-logger-captain = { path = "../logger-captain/dist/logger_captain-0.1.0-py3-none-any.whl" }
+decimalog = { git = "https://github.com/cvasilatos/decimalog.git" }
+cursusd = { git = "https://github.com/cvasilatos/cursusd.git" }
 
 [tool.ruff]
 line-length = 180
@@ -45,12 +45,6 @@ ignore = [
     "PLR0913",
     "PLR2004",
     "G004",
-    "D100",
-    "D101",
-    "D102",
-    "D103",
-    "D105",
-    "D107",
     "INP001",
     "ANN401",
     "COM812",

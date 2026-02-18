@@ -1,9 +1,11 @@
+"""Module for the base class of protocol validation using Cursusd and Wireshark."""
+
 import logging
 import random
 from typing import TYPE_CHECKING, cast
 
 import pyshark
-from logger_captain.logger import CustomLogger
+from decimalog.logger import CustomLogger
 from pyshark.packet.layers.base import BaseLayer
 
 if TYPE_CHECKING:
@@ -17,13 +19,16 @@ from scapy.all import Raw
 from scapy.layers.inet import IP, TCP, UDP
 from scapy.layers.l2 import Ether
 
-from protocol_validator.protocol_info import ProtocolInfo
-from protocol_validator.validator_error import ValidatorError
-from protocol_validator.validator_wireshark_error import ValidatorWiresharkError
+from praetor.exceptions.validator_error import ValidatorError
+from praetor.exceptions.validator_wireshark_error import ValidatorWiresharkError
+from praetor.protocol_info import ProtocolInfo
 
 
 class ValidatorBase:
+    """Base class for protocol validation using Cursusd and Wireshark."""
+
     def __init__(self, protocol: str) -> None:
+        """Initialize the ValidatorBase with the specified protocol."""
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
 
         self.protocol: str = protocol
@@ -43,10 +48,28 @@ class ValidatorBase:
         self._next_tcp_ack: int = 1
 
     def __del__(self) -> None:
+        """Clean up resources when the ValidatorBase instance is destroyed."""
         if self._cap:
             self._cap.close()
 
     def validate(self, packet: str, *, is_request: bool) -> BaseLayer:
+        """Validate the given packet bytes (in hex) as either a request or response.
+
+        This method constructs a full Ethernet/IP/TCP or Ethernet/IP/UDP packet with the given payload, parses it using pyshark, and checks for protocol-specific
+        layers and Wireshark expert info.
+
+        Args:
+            packet: str - The packet bytes in hexadecimal string format.
+            is_request: bool - Whether to treat the packet as a request (True) or response (False).
+
+        Returns:
+            BaseLayer - The protocol-specific layer if validation is successful.
+
+        Raises:
+            ValidatorWiresharkError - If Wireshark parsing detects an error in the packet.
+            ValidatorError - If the expected protocol layer is not found in the parsed packet.
+
+        """
         payload_bytes: bytes = bytes.fromhex(packet)
         payload_len: int = len(payload_bytes)
 
@@ -122,7 +145,7 @@ if __name__ == "__main__":
     group.add_argument("-s", "--response", action="store_true", help="Treat packet as response")
     args: argparse.Namespace = parser.parse_args()
 
-    CustomLogger.setup_logging("logs", "protocol_validator", level="TRACE")
+    CustomLogger.setup_logging("logs", "praetor", level="TRACE")
     validator = ValidatorBase(args.protocol)
     index = 0
     for _ in range(5):

@@ -255,6 +255,33 @@ wheels = [
 ]
 
 [[package]]
+name = "cursusd"
+version = "0.1.0"
+source = { git = "https://github.com/cvasilatos/cursusd.git#e929a9c6d01265ae0455cd4cb64ec61072a11091" }
+dependencies = [
+    { name = "decimalog" },
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pymodbus" },
+    { name = "pyright" },
+    { name = "readmeai" },
+    { name = "ruff" },
+]
+
+[[package]]
+name = "decimalog"
+version = "0.1.0"
+source = { git = "https://github.com/cvasilatos/decimalog.git#c795b3bad8c9486e369b6eb195e676508a2d5de3" }
+dependencies = [
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pyright" },
+    { name = "readmeai" },
+    { name = "ruff" },
+    { name = "ty" },
+]
+
+[[package]]
 name = "distlib"
 version = "0.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -578,32 +605,6 @@ wheels = [
 ]
 
 [[package]]
-name = "logger-captain"
-version = "0.1.0"
-source = { path = "../logger-captain/dist/logger_captain-0.1.0-py3-none-any.whl" }
-dependencies = [
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "pyright" },
-    { name = "readmeai" },
-    { name = "ruff" },
-    { name = "ty" },
-]
-wheels = [
-    { filename = "logger_captain-0.1.0-py3-none-any.whl", hash = "sha256:357c40dfa75f7cf835969d9d58bfc93f2fe27f78852f79d720b5d3b620885cd1" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "pyright" },
-    { name = "readmeai" },
-    { name = "ruff" },
-    { name = "ty", specifier = ">=0.0.17" },
-]
-
-[[package]]
 name = "lxml"
 version = "6.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -880,6 +881,39 @@ wheels = [
 ]
 
 [[package]]
+name = "praetor"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "cursusd" },
+    { name = "decimalog" },
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pyright" },
+    { name = "pyshark" },
+    { name = "readmeai" },
+    { name = "ruff" },
+    { name = "scapy" },
+    { name = "tool" },
+    { name = "ty" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "cursusd", git = "https://github.com/cvasilatos/cursusd.git" },
+    { name = "decimalog", git = "https://github.com/cvasilatos/decimalog.git" },
+    { name = "mypy" },
+    { name = "pre-commit" },
+    { name = "pyright" },
+    { name = "pyshark", specifier = ">=0.6" },
+    { name = "readmeai" },
+    { name = "ruff" },
+    { name = "scapy", specifier = ">=2.7.0" },
+    { name = "tool", specifier = ">=0.8.0" },
+    { name = "ty", specifier = ">=0.0.17" },
+]
+
+[[package]]
 name = "pre-commit"
 version = "4.5.1"
 source = { registry = "https://pypi.org/simple" }
@@ -977,65 +1011,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/cb/ef/3c6ecf8b317aa982f309835e8f96987466123c6e596646d4e6a1dfcd080f/propcache-0.4.1-cp314-cp314t-win_amd64.whl", hash = "sha256:990f6b3e2a27d683cb7602ed6c86f15ee6b43b1194736f9baaeb93d0016633b1", size = 46259, upload-time = "2025-10-08T19:48:34.226Z" },
     { url = "https://files.pythonhosted.org/packages/c4/2d/346e946d4951f37eca1e4f55be0f0174c52cd70720f84029b02f296f4a38/propcache-0.4.1-cp314-cp314t-win_arm64.whl", hash = "sha256:ecef2343af4cc68e05131e45024ba34f6095821988a9d0a02aa7c73fcc448aa9", size = 40428, upload-time = "2025-10-08T19:48:35.441Z" },
     { url = "https://files.pythonhosted.org/packages/5b/5a/bc7b4a4ef808fa59a816c17b20c4bef6884daebbdf627ff2a161da67da19/propcache-0.4.1-py3-none-any.whl", hash = "sha256:af2a6052aeb6cf17d3e46ee169099044fd8224cbaf75c76a2ef596e8163e2237", size = 13305, upload-time = "2025-10-08T19:49:00.792Z" },
-]
-
-[[package]]
-name = "protocol-server"
-version = "0.1.0"
-source = { path = "../protocol-server/dist/protocol_server-0.1.0-py3-none-any.whl" }
-dependencies = [
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "pymodbus" },
-    { name = "pyright" },
-    { name = "readmeai" },
-    { name = "ruff" },
-]
-wheels = [
-    { filename = "protocol_server-0.1.0-py3-none-any.whl", hash = "sha256:bbb93f16c31a1608c74aead03597cf9caa4e285dfe3d0af52c406773856c9672" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "pymodbus", specifier = ">=3.12.0" },
-    { name = "pyright" },
-    { name = "readmeai" },
-    { name = "ruff" },
-]
-
-[[package]]
-name = "protocol-validator"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "logger-captain" },
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "protocol-server" },
-    { name = "pyright" },
-    { name = "pyshark" },
-    { name = "readmeai" },
-    { name = "ruff" },
-    { name = "scapy" },
-    { name = "tool" },
-    { name = "ty" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "logger-captain", path = "../logger-captain/dist/logger_captain-0.1.0-py3-none-any.whl" },
-    { name = "mypy" },
-    { name = "pre-commit" },
-    { name = "protocol-server", path = "../protocol-server/dist/protocol_server-0.1.0-py3-none-any.whl" },
-    { name = "pyright" },
-    { name = "pyshark", specifier = ">=0.6" },
-    { name = "readmeai" },
-    { name = "ruff" },
-    { name = "scapy", specifier = ">=2.7.0" },
-    { name = "tool", specifier = ">=0.8.0" },
-    { name = "ty", specifier = ">=0.0.17" },
 ]
 
 [[package]]
