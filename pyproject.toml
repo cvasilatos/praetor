@@ -23,16 +23,16 @@ dependencies = [
     "pyshark>=0.6",
     "ty>=0.0.17",
     "tool>=0.8.0",
-    "decimalog",
     "cursusd",
+    "decimalog",
 ]
 
 [tool.uv]
 managed = true
 
 [tool.uv.sources]
-decimalog = { git = "https://github.com/cvasilatos/decimalog.git" }
 cursusd = { git = "https://github.com/cvasilatos/cursusd.git" }
+decimalog = { git = "https://github.com/cvasilatos/decimalog.git" }
 
 [tool.ruff]
 line-length = 180
