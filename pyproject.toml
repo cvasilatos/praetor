@@ -25,6 +25,13 @@ dependencies = [
     "mkdocs-include-markdown-plugin>=7.2.1",
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.15.1",
+    "ty>=0.0.17",
+]
+
 [tool.uv]
 managed = true
 
@@ -37,38 +44,10 @@ line-length = 180
 target-version = "py312"
 exclude = [".git", ".mypy_cache", ".ruff_cache", "node_modules", "venv", ".venv"]
 
-[tool.ruff.lint]
-select = ["ALL"]
-ignore = [
-    "PLR0913",
-    "PLR2004",
-    "G004",
-    "INP001",
-    "ANN401",
-    "COM812",
-    "TRY003",
-    "EM101",
-    "EM102",
-    "BLE001",
-    "T201",
-    "S311",
-    "C408",
-    "S101",
-    "PERF203",
-]
-unfixable = ["F401"]
-
-[tool.ruff.lint.isort]
-combine-as-imports = true
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-
 [tool.ty.environment]
 python = "./.venv/bin/python"
 python-version = "3.12"
-root = ["src"]
+root = ["src/praetor"]
 
 [tool.ty.rules]
 all = "error"
