@@ -1,4 +1,4 @@
-site_name: {{cookiecutter.project_name}}
+site_name: praetor
 theme:
   name: readthedocs
   color_mode: dark
@@ -14,7 +14,7 @@ plugins:
   - mkdocstrings:
         handlers:
           python:
-            paths: ["src/{{cookiecutter.project_slug}}/"]
+            paths: ["src/praetor/"]
 
 markdown_extensions:
   - admonition
