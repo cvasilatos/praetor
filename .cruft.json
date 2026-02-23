@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/cvasilatos/python-standards.git",
-  "commit": "0e8f9516e7d12d549bdb824ac263432dc367f98d",
+  "commit": "a7c7ec413851e366c8c39363bfe5d3dd162bf447",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -9,7 +9,7 @@
       "author_name": "Christoforos Vasilatos",
       "python_version": "3.12",
       "_template": "https://github.com/cvasilatos/python-standards.git",
-      "_commit": "0e8f9516e7d12d549bdb824ac263432dc367f98d"
+      "_commit": "a7c7ec413851e366c8c39363bfe5d3dd162bf447"
     }
   },
   "directory": null

@@ -1,5 +1,8 @@
-.mypy_cache/
 .ruff_cache/
 __pycache__/
 .venv/
 dist/
+build/
+.coverage
+.pytest_cache/
+logs/

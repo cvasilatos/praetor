@@ -11,6 +11,7 @@ repos:
     rev: 0.10.3
     hooks:
       - id: uv-lock
+
   - repo: local
     hooks:
       - id: ty
