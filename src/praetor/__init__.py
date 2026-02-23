@@ -1,1 +1,1 @@
-"""Packet Validator using Cursusd and Wireshark."""
+"""Praetor is Packet Validator using Cursusd and Wireshark."""

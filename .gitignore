@@ -1,8 +1,9 @@
-.ruff_cache/
-__pycache__/
 .venv/
+.ruff_cache/
+.pytest_cache/
+__pycache__/
 dist/
 build/
-.coverage
-.pytest_cache/
 logs/
+site/
+.coverage
