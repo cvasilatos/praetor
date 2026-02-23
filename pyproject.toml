@@ -14,17 +14,15 @@ version = "0.1.0"
 description = ""
 requires-python = ">=3.12"
 dependencies = [
-    "ruff",
-    "mypy",
-    "pyright",
-    "readmeai",
-    "pre-commit",
     "scapy>=2.7.0",
     "pyshark>=0.6",
     "ty>=0.0.17",
     "tool>=0.8.0",
     "cursusd",
-    "decimalog",
+    "decima",
+    "mkdocs-material>=9.7.2",
+    "mkdocstrings[python]>=1.0.3",
+    "mkdocs-include-markdown-plugin>=7.2.1",
 ]
 
 [tool.uv]
@@ -32,7 +30,7 @@ managed = true
 
 [tool.uv.sources]
 cursusd = { git = "https://github.com/cvasilatos/cursusd.git" }
-decimalog = { git = "https://github.com/cvasilatos/decimalog.git" }
+decima = { git = "https://github.com/cvasilatos/decima.git" }
 
 [tool.ruff]
 line-length = 180
