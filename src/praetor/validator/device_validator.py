@@ -23,6 +23,7 @@ class _DeviceValidator:
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
         self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
         self._socket_manager = SocketManager("localhost", self._protocol_info.port)
+        self._socket_manager.connect()
         self._is_valid_response = is_valid_response
 
     def validate(self, packet: str) -> bytes:
