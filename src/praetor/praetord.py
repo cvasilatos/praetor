@@ -4,6 +4,8 @@ import logging
 from collections.abc import Callable
 from typing import TYPE_CHECKING, cast
 
+from pyshark.packet.layers.base import BaseLayer
+
 from praetor.validator.device_validator import DeviceValidator
 from praetor.validator.pyshark_validator import PysharkValidator
 
@@ -23,7 +25,7 @@ class Praetor:
         self._device_validator = DeviceValidator(protocol, is_valid_response)
         self._pyshark_validator = PysharkValidator(protocol)
 
-    def validate(self, packet: str, *, is_request: bool, run_on_device: bool) -> bytes | None:
+    def validate(self, packet: str, *, is_request: bool, run_on_device: bool) -> tuple[bytes | None, BaseLayer]:
         """Validate the given packet bytes (in hex) as either a request or response.
 
         Args:
@@ -40,9 +42,9 @@ class Praetor:
         else:
             response = None
 
-        self._pyshark_validator.validate(packet, is_request=is_request)
+        base_layer: BaseLayer = self._pyshark_validator.validate(packet, is_request=is_request)
 
-        return response
+        return response, base_layer
 
     @property
     def device_validator(self) -> DeviceValidator:
