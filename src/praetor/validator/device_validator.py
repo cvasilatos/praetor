@@ -9,7 +9,7 @@ from praetor.connection.socket_manager import SocketManager
 from praetor.protocol_info import ProtocolInfo
 
 
-class DeviceValidator:
+class _DeviceValidator:
     """Validator class for validating protocol packets against a live device using Wireshark parsing."""
 
     def __init__(self, protocol: str, is_valid_response: Callable) -> None:
