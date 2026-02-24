@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class SocketManager:
     """Manages socket connections with automatic reconnection capabilities."""
 
-    def __init__(self, host: str, port: int, timeout: float = 1.0) -> None:
+    def __init__(self, host: str, port: int, timeout: float = 0.01) -> None:
         """Initialize the SocketManager with connection parameters.
 
         Args:

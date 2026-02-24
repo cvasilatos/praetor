@@ -17,7 +17,7 @@ class TestSocketManagerConnect:
             mgr = SocketManager("127.0.0.1", 502)
             mgr.connect()
             mock_sock.connect.assert_called_once_with(("127.0.0.1", 502))
-            mock_sock.settimeout.assert_called_once_with(1.0)
+            mock_sock.settimeout.assert_called_once_with(0.01)
 
     def test_connect_uses_custom_timeout(self) -> None:
         mock_sock = MagicMock()
