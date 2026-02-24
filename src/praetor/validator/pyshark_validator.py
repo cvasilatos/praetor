@@ -21,7 +21,7 @@ from praetor.exceptions.validator_wireshark_error import ValidatorWiresharkError
 from praetor.protocol_info import ProtocolInfo
 
 
-class Praetor:
+class PysharkValidator:
     """Base class for protocol validation using Cursusd and Wireshark."""
 
     def __init__(self, protocol: str) -> None:

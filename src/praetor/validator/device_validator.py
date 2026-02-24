@@ -12,18 +12,18 @@ from praetor.protocol_info import ProtocolInfo
 class DeviceValidator:
     """Validator class for validating protocol packets against a live device using Wireshark parsing."""
 
-    def __init__(self, protocol: str, is_valid: Callable) -> None:
+    def __init__(self, protocol: str, is_valid_response: Callable) -> None:
         """Initialize the DeviceValidator with the specified protocol.
 
         Args:
             protocol (str): The name of the protocol to validate against (e.g., "mbtcp", "s7comm", etc.).
-            is_valid (Callable): A callable that takes a bytes object (the response from the device) and returns a boolean indicating
+            is_valid_response (Callable): A callable that takes a bytes object (the response from the device) and returns a boolean indicating
             whether the response is valid for the given protocol.
         """
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
         self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
         self._socket_manager = SocketManager("localhost", self._protocol_info.port)
-        self._is_valid = is_valid
+        self._is_valid_response = is_valid_response
 
     def validate_seed(self, packet: str) -> bytes:
         """Validate the seed packet by sending it to the target server and analyzing the response.
@@ -43,7 +43,7 @@ class DeviceValidator:
         self._socket_manager.send(bytes.fromhex(packet))
         response: bytes = self._socket_manager.receive(1024)
 
-        if not self._is_valid(response):
+        if not self._is_valid_response(response):
             raise ValueError(f"No response or unexpected response for packet: {packet}, cannot dissect.")
 
         self.logger.info(f"[+] Dissecting packet: {packet} : {response.hex()} for protocol layers: {self._protocol_info.scapy_names}")
