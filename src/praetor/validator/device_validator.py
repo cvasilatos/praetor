@@ -25,7 +25,7 @@ class _DeviceValidator:
         self._socket_manager = SocketManager("localhost", self._protocol_info.port)
         self._is_valid_response = is_valid_response
 
-    def validate_seed(self, packet: str) -> bytes:
+    def validate(self, packet: str) -> bytes:
         """Validate the seed packet by sending it to the target server and analyzing the response.
 
         Returns:
