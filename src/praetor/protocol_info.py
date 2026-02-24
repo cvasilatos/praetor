@@ -5,7 +5,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-    from decimalog.logger import CustomLogger
+    from decima.logger import CustomLogger
 
 
 class ProtocolInfo(Enum):

@@ -16,33 +16,34 @@ requires-python = ">=3.12"
 dependencies = [
     "scapy>=2.7.0",
     "pyshark>=0.6",
-    "ty>=0.0.17",
     "tool>=0.8.0",
-    "cursusd",
     "decima",
     "mkdocs-material>=9.7.2",
     "mkdocstrings[python]>=1.0.3",
     "mkdocs-include-markdown-plugin>=7.2.1",
+    "cursus",
 ]
 
 [dependency-groups]
 dev = [
-    "pytest>=8.0",
     "ruff>=0.15.1",
     "ty>=0.0.17",
+]
+test = [
+    "pytest>=9.0.2",
 ]
 
 [tool.uv]
 managed = true
 
 [tool.uv.sources]
-cursusd = { git = "https://github.com/cvasilatos/cursusd.git" }
 decima = { git = "https://github.com/cvasilatos/decima.git" }
+cursus = { git = "https://github.com/cvasilatos/cursus.git" }
 
 [tool.ruff]
 line-length = 180
 target-version = "py312"
-exclude = [".git", ".mypy_cache", ".ruff_cache", "node_modules", "venv", ".venv"]
+exclude = [".git", ".ruff_cache", "node_modules", "venv", ".venv", "site", "dist", "build"]
 
 [tool.ty.environment]
 python = "./.venv/bin/python"

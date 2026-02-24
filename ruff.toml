@@ -12,8 +12,8 @@ lint.ignore = [
     "D100", # Missing docstring in public module
 ]
 
-lint.isort = { combine-as-imports = true, split-on-trailing-comma=true }
-format = { quote-style = "double", indent-style = "space", skip-magic-trailing-comma = false }
+lint.isort = { combine-as-imports = true, split-on-trailing-comma=false }
+format = { quote-style = "double", indent-style = "space" }
 
 [lint.pydocstyle]
 convention = "google"

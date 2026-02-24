@@ -1,4 +1,4 @@
-site_name: praetor
+site_name: raetor
 theme:
   name: readthedocs
   color_mode: dark
@@ -6,7 +6,8 @@ theme:
 
 nav:
   - Home: index.md
-  - API: api.md
+  - API Reference:
+    - Praetor: api/praetord.md
 
 plugins:
   - search

@@ -1,5 +1,3 @@
-"""Module for base error class for protocol validation errors."""
-
 from scapy.packet import Packet
 
 

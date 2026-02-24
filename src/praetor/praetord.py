@@ -1,19 +1,16 @@
 """Module for the base class of protocol validation using Cursusd and Wireshark."""
 
 import logging
-import random
+import secrets
 from typing import TYPE_CHECKING, cast
 
 import pyshark
-from decimalog.logger import CustomLogger
 from pyshark.packet.layers.base import BaseLayer
 
 if TYPE_CHECKING:
+    from decima.logger import CustomLogger
     from pyshark.packet.packet import Packet
 
-
-import argparse
-import sys
 
 from scapy.all import Raw
 from scapy.layers.inet import IP, TCP, UDP
@@ -55,9 +52,6 @@ class ValidatorBase:
     def validate(self, packet: str, *, is_request: bool) -> BaseLayer:
         """Validate the given packet bytes (in hex) as either a request or response.
 
-        This method constructs a full Ethernet/IP/TCP or Ethernet/IP/UDP packet with the given payload, parses it using pyshark, and checks for protocol-specific
-        layers and Wireshark expert info.
-
         Args:
             packet: str - The packet bytes in hexadecimal string format.
             is_request: bool - Whether to treat the packet as a request (True) or response (False).
@@ -66,8 +60,12 @@ class ValidatorBase:
             BaseLayer - The protocol-specific layer if validation is successful.
 
         Raises:
-            ValidatorWiresharkError - If Wireshark parsing detects an error in the packet.
-            ValidatorError - If the expected protocol layer is not found in the parsed packet.
+            ValidatorWiresharkError: If Wireshark parsing detects an error in the packet.
+            ValidatorError: If the expected protocol layer is not found in the parsed packet.
+
+        Description:
+            This method constructs a full Ethernet/IP/TCP or Ethernet/IP/UDP packet with the given payload, parses it using pyshark, and checks for protocol-specific
+            layers and Wireshark expert info.
 
         """
         payload_bytes: bytes = bytes.fromhex(packet)
@@ -89,7 +87,7 @@ class ValidatorBase:
                 tcp_layer = UDP(sport=47808, dport=self._protocol_info.port)
             else:
                 tcp_layer = TCP(
-                    sport=random.randint(1024, 65535),
+                    sport=secrets.randbelow(65535 - 1024 + 1) + 1024,
                     dport=self._protocol_info.port,
                     flags="PA",
                     seq=seq,
@@ -98,7 +96,7 @@ class ValidatorBase:
         else:
             tcp_layer = TCP(
                 sport=self._protocol_info.port,
-                dport=random.randint(1024, 65535),
+                dport=secrets.randbelow(65535 - 1024 + 1) + 1024,
                 flags="PA",
                 seq=seq,
                 ack=ack,
@@ -134,25 +132,3 @@ class ValidatorBase:
         self.logger.trace(f"Validation successful for packet {is_request}: {parsed_packet}")
 
         return parsed_packet
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Validate protocol packet")
-    parser.add_argument("packet", nargs="?", default="000100000006010300000002", help="Packet bytes in hex")
-    parser.add_argument("-p", "--protocol", default="mbtcp", help="Protocol name (mbtcp, s7comm, iec104, dnp3)")
-    group: argparse._MutuallyExclusiveGroup = parser.add_mutually_exclusive_group()
-    group.add_argument("-r", "--request", action="store_true", help="Treat packet as request (default)")
-    group.add_argument("-s", "--response", action="store_true", help="Treat packet as response")
-    args: argparse.Namespace = parser.parse_args()
-
-    CustomLogger.setup_logging("logs", "praetor", level="TRACE")
-    validator = ValidatorBase(args.protocol)
-    index = 0
-    for _ in range(5):
-        try:
-            index += 1
-            pdu: BaseLayer = validator.validate(args.packet, is_request=not args.response)
-        except Exception as e:
-            print(f"Validation failed: {index}", e)
-
-    sys.exit(0)
