@@ -46,7 +46,7 @@ class _DeviceValidator:
             self._socket_manager.send(bytes.fromhex(packet))
             response: bytes = self._socket_manager.receive(1024)
         except OSError:
-            self.logger.warning("Socket error detected, reconnecting...")
+            self.logger.debug("Socket error detected, reconnecting...")
             self._socket_manager.reconnect()
             raise
 
