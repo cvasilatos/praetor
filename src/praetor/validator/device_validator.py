@@ -53,5 +53,5 @@ class _DeviceValidator:
         if not self._is_valid_response(response.hex()):
             raise ValueError(f"No response or unexpected response for packet: {packet}, cannot dissect.")
 
-        self.logger.info(f"[+] Dissecting packet: {packet} : {response.hex()} for protocol layers: {self._protocol_info.scapy_names}")
+        self.logger.debug(f"[+] Dissecting packet: {packet} : {response.hex()} for protocol layers: {self._protocol_info.scapy_names}")
         return response
