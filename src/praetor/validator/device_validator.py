@@ -33,16 +33,22 @@ class _DeviceValidator:
             bytes: The response from the server if it is valid according to the provided is_valid function.
 
         Raises:
+            OSError: If the socket crashes during send or receive, after closing and reconnecting.
             ValueError: If no response or an unexpected response is received for the seed packet, indicating that it cannot be dissected.
 
         Description:
             The method sends the seed packet to the server and waits for a response. If a valid response is received,
             it uses PyShark to dissect the packet and extract protocol layers. If no response or an unexpected response is received, it raises a ValueError indicating
-            that the seed cannot be dissected.
+            that the seed cannot be dissected. If the socket crashes, all socket resources are closed and the connection is re-established before re-raising.
 
         """
-        self._socket_manager.send(bytes.fromhex(packet))
-        response: bytes = self._socket_manager.receive(1024)
+        try:
+            self._socket_manager.send(bytes.fromhex(packet))
+            response: bytes = self._socket_manager.receive(1024)
+        except OSError:
+            self.logger.warning("Socket error detected, reconnecting...")
+            self._socket_manager.reconnect()
+            raise
 
         if not self._is_valid_response(response.hex()):
             raise ValueError(f"No response or unexpected response for packet: {packet}, cannot dissect.")
