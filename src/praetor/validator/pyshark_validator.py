@@ -110,7 +110,7 @@ class _PysharkValidator:
         self._tcp_seq = next_seq
         self._tcp_ack = next_ack
 
-        self.logger.debug(f"Validating packet (is_request={is_request}): {bytes(full_packet).hex()}")
+        self.logger.debug(f"Validating packet: {packet}, is_request={is_request}: {bytes(full_packet).hex()}")
         layer: BaseLayer
         for layer in parsed_packet.layers:
             if layer.layer_name not in {"tcp", "eth", "ip"}:
