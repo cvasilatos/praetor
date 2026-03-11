@@ -12,7 +12,7 @@ class ProtocolInfo(Enum):
     """Information about supported protocols."""
 
     MBTCP = ("mbtcp", 502, 5020, ["mbtcp", "modbus"])
-    S7COMM = ("s7comm", 102, 1020, ["s7comm"])
+    S7COMM = ("s7comm", 102, 10200, ["s7comm"])
     IEC104 = ("iec104", 2404, 24040, ["iec60870_104"])
     DNP3 = ("dnp3", 20000, 20000, ["dnp3"])
     ENIP = ("enip", 44818, 44818, ["enip"])
