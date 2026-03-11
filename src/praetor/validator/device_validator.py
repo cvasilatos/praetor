@@ -22,7 +22,7 @@ class _DeviceValidator:
         """
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
         self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
-        self._socket_manager = SocketManager("localhost", self._protocol_info.custom_port)
+        self._socket_manager = SocketManager("localhost", self._protocol_info.custom_port, protocol, timeout=0.05)
         self._socket_manager.connect()
         self._is_valid_response = is_valid_response
 
@@ -42,6 +42,7 @@ class _DeviceValidator:
             that the seed cannot be dissected. If the socket crashes, all socket resources are closed and the connection is re-established before re-raising.
 
         """
+        response: bytes = b""
         try:
             self._socket_manager.send(bytes.fromhex(packet))
             response: bytes = self._socket_manager.receive(1024)

@@ -3,7 +3,6 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from praetor.validator.device_validator import _DeviceValidator
 
 
@@ -20,8 +19,19 @@ class TestDeviceValidatorSocketCrashRecovery:
         mock_protocol_info.scapy_names = ["modbus"]
 
         with (
-            patch("praetor.connection.socket_manager.socket.socket", return_value=mock_sock),
-            patch("praetor.validator.device_validator.ProtocolInfo.from_name", return_value=mock_protocol_info),
+            patch(
+                "praetor.connection.socket_manager.socket.socket",
+                return_value=mock_sock,
+            ),
+            patch("praetor.connection.socket_manager.Starter"),
+            patch(
+                "praetor.connection.socket_manager.SocketManager._is_server_running",
+                return_value=True,
+            ),
+            patch(
+                "praetor.validator.device_validator.ProtocolInfo.from_name",
+                return_value=mock_protocol_info,
+            ),
         ):
             validator = _DeviceValidator("mbtcp", lambda r: True)
 
@@ -43,8 +53,19 @@ class TestDeviceValidatorSocketCrashRecovery:
         mock_protocol_info.scapy_names = ["modbus"]
 
         with (
-            patch("praetor.connection.socket_manager.socket.socket", return_value=mock_sock),
-            patch("praetor.validator.device_validator.ProtocolInfo.from_name", return_value=mock_protocol_info),
+            patch(
+                "praetor.connection.socket_manager.socket.socket",
+                return_value=mock_sock,
+            ),
+            patch("praetor.connection.socket_manager.Starter"),
+            patch(
+                "praetor.connection.socket_manager.SocketManager._is_server_running",
+                return_value=True,
+            ),
+            patch(
+                "praetor.validator.device_validator.ProtocolInfo.from_name",
+                return_value=mock_protocol_info,
+            ),
         ):
             validator = _DeviceValidator("mbtcp", lambda r: True)
 
@@ -64,8 +85,19 @@ class TestDeviceValidatorSocketCrashRecovery:
         mock_protocol_info.scapy_names = ["modbus"]
 
         with (
-            patch("praetor.connection.socket_manager.socket.socket", return_value=mock_sock),
-            patch("praetor.validator.device_validator.ProtocolInfo.from_name", return_value=mock_protocol_info),
+            patch(
+                "praetor.connection.socket_manager.socket.socket",
+                return_value=mock_sock,
+            ),
+            patch("praetor.connection.socket_manager.Starter"),
+            patch(
+                "praetor.connection.socket_manager.SocketManager._is_server_running",
+                return_value=True,
+            ),
+            patch(
+                "praetor.validator.device_validator.ProtocolInfo.from_name",
+                return_value=mock_protocol_info,
+            ),
         ):
             validator = _DeviceValidator("mbtcp", lambda r: True)
             result = validator.validate("deadbeef")

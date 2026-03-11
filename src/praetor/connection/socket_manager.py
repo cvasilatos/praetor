@@ -9,6 +9,8 @@ import socket
 import types
 from typing import TYPE_CHECKING, Self, cast
 
+from cursus.starter import Starter
+
 if TYPE_CHECKING:
     from decima.logger import CustomLogger
 
@@ -16,12 +18,13 @@ if TYPE_CHECKING:
 class SocketManager:
     """Manages socket connections with automatic reconnection capabilities."""
 
-    def __init__(self, host: str, port: int, timeout: float = 0.01) -> None:
+    def __init__(self, host: str, port: int, protocol: str, timeout: float = 0.01) -> None:
         """Initialize the SocketManager with connection parameters.
 
         Args:
             host: Target host address
             port: Target port number
+            protocol: Protocol server startup preset for cursus
             timeout: Socket timeout in seconds
 
         """
@@ -31,12 +34,26 @@ class SocketManager:
         self._timeout: float = timeout
         self._sock: socket.socket | None = None
 
+        self._cursus = Starter(protocol, port=self._port, delay=3)
+        self._cursus.start_server()
+
     def connect(self) -> None:
         """Establish a socket connection to the target server."""
+        if not self._is_server_running():
+            self._cursus.start_server()
+
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._sock.settimeout(self._timeout)
         self._sock.connect((self._host, self._port))
         self.logger.debug(f"Connected to {self._host}:{self._port}")
+
+    def _is_server_running(self) -> bool:
+        """Check whether a process is listening on the configured host/port."""
+        try:
+            with socket.create_connection((self._host, self._port), timeout=self._timeout):
+                return True
+        except OSError:
+            return False
 
     def reconnect(self) -> None:
         """Close existing connection and establish a new one."""
