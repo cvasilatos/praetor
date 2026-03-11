@@ -5,6 +5,8 @@ connection, reconnection, and cleanup operations.
 """
 
 import logging
+import multiprocessing
+import platform
 import socket
 import time
 import types
@@ -36,11 +38,23 @@ class SocketManager:
         self._timeout: float = timeout
         self._sock: socket.socket | None = None
 
+        self._configure_multiprocessing_start_method()
+
         self._cursus = Starter(protocol, port=self._port, delay=3)
         self._server_thread: Thread = self._cursus.start_server()
 
         self._watchdog_thread = Thread(target=self._watchdog, daemon=True)
         self._watchdog_thread.start()
+
+    @staticmethod
+    def _configure_multiprocessing_start_method() -> None:
+        """Use fork on macOS to avoid pickling ctypes-backed server objects."""
+        if platform.system() != "Darwin":
+            return
+
+        current_method = multiprocessing.get_start_method(allow_none=True)
+        if current_method != "fork":
+            multiprocessing.set_start_method("fork", force=True)
 
     def _watchdog(self) -> None:
         """Monitors the server thread and restarts it if it dies unexpectedly."""
