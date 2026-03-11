@@ -6,7 +6,9 @@ connection, reconnection, and cleanup operations.
 
 import logging
 import socket
+import time
 import types
+from threading import Thread
 from typing import TYPE_CHECKING, Self, cast
 
 from cursus.starter import Starter
@@ -35,6 +37,17 @@ class SocketManager:
         self._sock: socket.socket | None = None
 
         self._cursus = Starter(protocol, port=self._port, delay=3)
+        self._server_thread: Thread = self._cursus.start_server()
+
+        self._watchdog_thread = Thread(target=self._watchdog, daemon=True)
+        self._watchdog_thread.start()
+
+    def _watchdog(self) -> None:
+        """Monitors the server thread and restarts it if it dies unexpectedly."""
+        self._server_thread.join()
+
+        self.logger.info(f"Server thread on port {self._port} died. Restarting...")
+        time.sleep(1)  # Brief pause to avoid rapid-fire restart loops
         self._cursus.start_server()
 
     def connect(self) -> None:
