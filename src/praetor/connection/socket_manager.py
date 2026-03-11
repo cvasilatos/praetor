@@ -44,6 +44,7 @@ class SocketManager:
 
     def _watchdog(self) -> None:
         """Monitors the server thread and restarts it if it dies unexpectedly."""
+        self.logger.critical(f"Waiting for server thread on port {self._port} to exit...")
         self._server_thread.join()
 
         self.logger.critical(f"Server thread on port {self._port} died. Restarting...")
