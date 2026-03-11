@@ -46,7 +46,7 @@ class SocketManager:
         """Monitors the server thread and restarts it if it dies unexpectedly."""
         self._server_thread.join()
 
-        self.logger.info(f"Server thread on port {self._port} died. Restarting...")
+        self.logger.critical(f"Server thread on port {self._port} died. Restarting...")
         time.sleep(1)  # Brief pause to avoid rapid-fire restart loops
         self._cursus.start_server()
 
