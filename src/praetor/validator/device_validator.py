@@ -46,6 +46,9 @@ class _DeviceValidator:
         try:
             self._socket_manager.send(bytes.fromhex(packet))
             response: bytes = self._socket_manager.receive(1024)
+            if len(response) == 0:
+                self.logger.debug("No response received, reconnecting to flush socket...")
+                self._socket_manager.reconnect()
         except OSError:
             self.logger.debug("Socket error detected, reconnecting...")
             self._socket_manager.reconnect()
