@@ -57,10 +57,9 @@ class SocketManager:
             multiprocessing.set_start_method("fork", force=True)
 
     def _watchdog(self) -> None:
-        """Monitors the server thread and restarts it if it dies unexpectedly."""
+        """Monitors the server thread."""
         self.logger.debug(f"Monitoring server thread: {self._server_thread.name}")
         self._server_thread.join()
-        self.logger.critical(f"Server: {self._server_thread.name} Failed. Restarting...")
         time.sleep(5)  # Make sure the port is fully released before restarting
 
     def connect(self) -> None:
