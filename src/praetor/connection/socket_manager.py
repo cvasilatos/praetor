@@ -22,6 +22,8 @@ if TYPE_CHECKING:
 class SocketManager:
     """Manages socket connections with automatic reconnection capabilities."""
 
+    _SERVER_STARTUP_TIMEOUT = 10.0
+
     def __init__(self, host: str, port: int, protocol: str, timeout: float = 0.01) -> None:
         """Initialize the SocketManager with connection parameters.
 
@@ -42,6 +44,7 @@ class SocketManager:
 
         self._cursus = Starter(protocol, port=self._port, delay=3)
         self._server_thread: Thread = self._cursus.start_server()
+        self._wait_for_server_ready()
 
         self._watchdog_thread = Thread(target=self._watchdog, daemon=True)
         self._watchdog_thread.start()
@@ -67,6 +70,9 @@ class SocketManager:
         if not self._is_server_running():
             self.logger.info(f"Server on {self._host}:{self._port} not running. Starting server...")
             self._server_thread: Thread = self._cursus.start_server()
+            self._wait_for_server_ready()
+        else:
+            self._wait_for_server_ready()
 
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._sock.settimeout(self._timeout)
@@ -74,14 +80,20 @@ class SocketManager:
         self.logger.debug(f"Connected to {self._host}:{self._port}")
 
     def _is_server_running(self) -> bool:
-        """Check whether a process is listening on the configured host/port."""
-        try:
-            with socket.create_connection((self._host, self._port), timeout=self._timeout):
-                self.logger.debug(f"Server is running on {self._host}:{self._port}")
-                return True
-        except (OSError, ExceptionGroup):
-            self.logger.exception(f"Server is not running on {self._host}:{self._port}")
-            return False
+        """Check whether the managed server thread is alive."""
+        is_running = self._server_thread.is_alive()
+        if is_running:
+            self.logger.debug(f"Server thread is running for {self._host}:{self._port}")
+        else:
+            self.logger.debug(f"Server thread is not running for {self._host}:{self._port}")
+        return is_running
+
+    def _wait_for_server_ready(self) -> None:
+        """Block until cursus reports that the managed server is ready."""
+        if self._cursus.wait_until_ready(timeout=self._SERVER_STARTUP_TIMEOUT):
+            return
+
+        raise TimeoutError(f"Timed out waiting for server on {self._host}:{self._port} to become ready")
 
     def reconnect(self) -> None:
         """Close existing connection and establish a new one."""

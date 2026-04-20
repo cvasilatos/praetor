@@ -10,12 +10,19 @@ from praetor.connection.socket_manager import SocketManager
 @pytest.fixture(autouse=True)
 def _mock_starter() -> types.GeneratorType:
     """Prevent tests from starting a real protocol server."""
-    with patch("praetor.connection.socket_manager.Starter"):
-        yield
+    with patch("praetor.connection.socket_manager.Starter") as starter_cls:
+        starter = starter_cls.return_value
+        starter.wait_until_ready.return_value = True
+        starter.start_server.return_value.is_alive.return_value = True
+        yield starter
 
 
 class TestSocketManagerConnect:
     """Tests for SocketManager.connect."""
+
+    def test_init_waits_for_cursus_ready(self, _mock_starter: MagicMock) -> None:
+        SocketManager("127.0.0.1", 502, "mbtcp")
+        _mock_starter.wait_until_ready.assert_called_once_with(timeout=10.0)
 
     def test_connect_creates_socket(self) -> None:
         mock_sock = MagicMock()
@@ -31,6 +38,22 @@ class TestSocketManagerConnect:
             mock_sock.connect.assert_called_once_with(("127.0.0.1", 502))
             mock_sock.settimeout.assert_called_once_with(0.01)
 
+    def test_connect_waits_for_cursus_ready(self, _mock_starter: MagicMock) -> None:
+        mock_sock = MagicMock()
+        with (
+            patch(
+                "praetor.connection.socket_manager.socket.socket",
+                return_value=mock_sock,
+            ),
+            patch.object(SocketManager, "_is_server_running", return_value=True),
+        ):
+            mgr = SocketManager("127.0.0.1", 502, "mbtcp")
+            _mock_starter.wait_until_ready.reset_mock()
+
+            mgr.connect()
+
+            _mock_starter.wait_until_ready.assert_called_once_with(timeout=10.0)
+
     def test_connect_uses_custom_timeout(self) -> None:
         mock_sock = MagicMock()
         with (
@@ -43,6 +66,14 @@ class TestSocketManagerConnect:
             mgr = SocketManager("127.0.0.1", 502, "mbtcp", timeout=5.0)
             mgr.connect()
             mock_sock.settimeout.assert_called_once_with(5.0)
+
+    def test_connect_raises_when_cursus_never_reports_ready(
+        self, _mock_starter: MagicMock
+    ) -> None:
+        _mock_starter.wait_until_ready.return_value = False
+
+        with pytest.raises(TimeoutError, match="Timed out waiting for server"):
+            SocketManager("127.0.0.1", 502, "mbtcp")
 
 
 class TestSocketManagerSend:
