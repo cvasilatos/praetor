@@ -58,11 +58,38 @@ class _PysharkValidator:
         self._next_tcp_seq: int = 1
         self._next_tcp_ack: int = 1
 
+    async def _close_capture_async(self, capture: pyshark.InMemCapture) -> None:
+        """Release tshark subprocess state without waiting forever on pyshark tasks."""
+        running_processes = getattr(capture, "_running_processes", None)
+        cleanup_subprocess = getattr(capture, "_cleanup_subprocess", None)
+        if running_processes is not None and callable(cleanup_subprocess):
+            for process in tuple(running_processes):
+                with suppress(Exception):
+                    await asyncio.wait_for(cleanup_subprocess(process), timeout=1.0)
+            running_processes.clear()
+
+        stderr_tasks = [task for task in getattr(capture, "_stderr_handling_tasks", []) if not task.done()]
+        for task in stderr_tasks:
+            task.cancel()
+        if stderr_tasks:
+            await asyncio.gather(*stderr_tasks, return_exceptions=True)
+        with suppress(Exception):
+            getattr(capture, "_stderr_handling_tasks", []).clear()
+
     def close(self) -> None:
         """Release the underlying pyshark capture."""
-        if self._cap is None:
+        capture = self._cap
+        if capture is None:
             return
-        self._cap.close()
+
+        event_loop = getattr(capture, "eventloop", None)
+        if isinstance(event_loop, asyncio.AbstractEventLoop) and not event_loop.is_closed() and not event_loop.is_running():
+            with suppress(Exception):
+                event_loop.run_until_complete(self._close_capture_async(capture))
+        else:
+            with suppress(Exception):
+                capture.close()
+
         self._cap = None
 
     def __del__(self) -> None:
