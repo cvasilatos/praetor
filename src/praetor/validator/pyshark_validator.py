@@ -1,5 +1,6 @@
 """Module for the base class of protocol validation using Cursusd and Wireshark."""
 
+import asyncio
 import logging
 import secrets
 from typing import TYPE_CHECKING, cast
@@ -24,7 +25,12 @@ from praetor.protocol_info import ProtocolInfo
 class _PysharkValidator:
     """Base class for protocol validation using Cursusd and Wireshark."""
 
-    def __init__(self, protocol: str) -> None:
+    def __init__(
+        self,
+        protocol: str,
+        *,
+        event_loop: asyncio.AbstractEventLoop | None = None,
+    ) -> None:
         """Initialize the ValidatorBase with the specified protocol."""
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
 
@@ -36,7 +42,14 @@ class _PysharkValidator:
         if self.protocol == "mbtcp":
             override_prefs["mbtcp.tcp.port"] = str(self._protocol_info.port)
 
-        self._cap = pyshark.InMemCapture(override_prefs=override_prefs, custom_parameters={"-o": "tcp.analyze_sequence_numbers:FALSE"})
+        capture_kwargs: dict[str, object] = {
+            "override_prefs": override_prefs,
+            "custom_parameters": {"-o": "tcp.analyze_sequence_numbers:FALSE"},
+        }
+        if event_loop is not None:
+            capture_kwargs["eventloop"] = event_loop
+
+        self._cap = pyshark.InMemCapture(**capture_kwargs)
 
         self._tcp_seq: int = 0
         self._tcp_ack: int = 0
