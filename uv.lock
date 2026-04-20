@@ -149,7 +149,7 @@ wheels = [
 [[package]]
 name = "cursus"
 version = "0.2.0"
-source = { git = "https://github.com/cvasilatos/cursus.git#e21e51c943334f8fb347b567e40b65513a900cd1" }
+source = { git = "https://github.com/cvasilatos/cursus.git#d32e3015b7c52261aa95368d10ad50f2ade88c5e" }
 dependencies = [
     { name = "decima" },
     { name = "mkdocs-include-markdown-plugin" },
