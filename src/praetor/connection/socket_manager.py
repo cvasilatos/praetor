@@ -133,11 +133,17 @@ class SocketManager:
         return self._sock.recv(buffer_size)
 
     def close(self) -> None:
-        """Close the socket connection."""
+        """Close the client socket connection."""
         if self._sock:
             self._sock.close()
             self._sock = None
             self.logger.debug(f"Closed connection to {self._host}:{self._port}")
+
+    def shutdown(self) -> None:
+        """Close the client socket and stop the managed cursus server."""
+        self.close()
+        self._cursus.stop_server()
+        self.logger.debug(f"Stopped managed server for {self._host}:{self._port}")
 
     def __enter__(self) -> Self:
         """Context manager entry."""

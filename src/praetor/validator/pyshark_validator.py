@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import secrets
+from contextlib import suppress
 from typing import TYPE_CHECKING, cast
 
 import pyshark
@@ -49,7 +50,7 @@ class _PysharkValidator:
         if event_loop is not None:
             capture_kwargs["eventloop"] = event_loop
 
-        self._cap = pyshark.InMemCapture(**capture_kwargs)
+        self._cap: pyshark.InMemCapture | None = pyshark.InMemCapture(**capture_kwargs)
 
         self._tcp_seq: int = 0
         self._tcp_ack: int = 0
@@ -57,10 +58,17 @@ class _PysharkValidator:
         self._next_tcp_seq: int = 1
         self._next_tcp_ack: int = 1
 
+    def close(self) -> None:
+        """Release the underlying pyshark capture."""
+        if self._cap is None:
+            return
+        self._cap.close()
+        self._cap = None
+
     def __del__(self) -> None:
         """Clean up resources when the ValidatorBase instance is destroyed."""
-        if self._cap:
-            self._cap.close()
+        with suppress(Exception):
+            self.close()
 
     def validate(self, packet: str, *, is_request: bool) -> BaseLayer:
         """Validate the given packet bytes (in hex) as either a request or response.
@@ -114,6 +122,9 @@ class _PysharkValidator:
                 seq=seq,
                 ack=ack,
             )
+
+        if self._cap is None:
+            raise RuntimeError("Pyshark validator is closed.")
 
         full_packet = Ether(src="00:11:22:33:44:55", dst="00:11:22:33:44:66") / IP(src="192.168.1.10", dst="192.168.1.20") / tcp_layer / Raw(load=payload_bytes)
 

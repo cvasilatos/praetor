@@ -1,5 +1,6 @@
 import logging
 from collections.abc import Callable
+from contextlib import suppress
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
@@ -25,6 +26,15 @@ class _DeviceValidator:
         self._socket_manager = SocketManager("localhost", self._protocol_info.custom_port, protocol, timeout=0.05)
         self._socket_manager.connect()
         self._is_valid_response = is_valid_response
+
+    def close(self) -> None:
+        """Release the managed socket and stop the local cursus server."""
+        self._socket_manager.shutdown()
+
+    def __del__(self) -> None:
+        """Best-effort cleanup for cached validators."""
+        with suppress(Exception):
+            self.close()
 
     def validate(self, packet: str) -> bytes:
         """Validate the seed packet by sending it to the target server and analyzing the response.
