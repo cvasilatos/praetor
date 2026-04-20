@@ -12,7 +12,7 @@ packages = ["src/praetor"]
 name = "praetor"
 version = "0.1.0"
 description = ""
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 dependencies = [
     "scapy>=2.7.0",
     "pyshark>=0.6",
@@ -48,7 +48,7 @@ exclude = [".git", ".ruff_cache", "node_modules", "venv", ".venv", "site", "dist
 
 [tool.ty.environment]
 python = "./.venv/bin/python"
-python-version = "3.12"
+python-version = "3.14"
 root = ["src/praetor"]
 
 [tool.ty.rules]
