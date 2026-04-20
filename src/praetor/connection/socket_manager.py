@@ -32,7 +32,6 @@ class SocketManager:
             port: Target port number
             protocol: Protocol server startup preset for cursus
             timeout: Socket timeout in seconds
-
         """
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
         self._host: str = host
@@ -48,8 +47,6 @@ class SocketManager:
 
         self._watchdog_thread = Thread(target=self._watchdog, daemon=True)
         self._watchdog_thread.start()
-
-        self._shutdown = False
 
     @staticmethod
     def _configure_multiprocessing_start_method() -> None:
@@ -143,10 +140,6 @@ class SocketManager:
 
     def shutdown(self) -> None:
         """Close the client socket and stop the managed cursus server."""
-        if self._shutdown:
-            return
-        self._shutdown = True
-
         try:
             self._cursus.stop_server()
         except Exception:
