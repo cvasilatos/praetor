@@ -147,11 +147,11 @@ class SocketManager:
             return
         self._shutdown = True
 
-        self.close()
         try:
             self._cursus.stop_server()
         except Exception:
             self.logger.exception("Failed stopping managed server")
+        self.close()
 
     def __enter__(self) -> Self:
         """Context manager entry."""
