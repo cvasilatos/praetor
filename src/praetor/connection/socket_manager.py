@@ -49,6 +49,8 @@ class SocketManager:
         self._watchdog_thread = Thread(target=self._watchdog, daemon=True)
         self._watchdog_thread.start()
 
+        self._shutdown = False
+
     @staticmethod
     def _configure_multiprocessing_start_method() -> None:
         """Use fork on macOS to avoid pickling ctypes-backed server objects."""
@@ -141,9 +143,15 @@ class SocketManager:
 
     def shutdown(self) -> None:
         """Close the client socket and stop the managed cursus server."""
+        if self._shutdown:
+            return
+        self._shutdown = True
+
         self.close()
-        self._cursus.stop_server()
-        self.logger.debug(f"Stopped managed server for {self._host}:{self._port}")
+        try:
+            self._cursus.stop_server()
+        except Exception:
+            self.logger.exception("Failed stopping managed server")
 
     def __enter__(self) -> Self:
         """Context manager entry."""
