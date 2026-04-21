@@ -1,5 +1,6 @@
 """Tests for proteus.utils.socket_manager."""
 
+import socket
 import types
 from unittest.mock import MagicMock, patch
 
@@ -30,13 +31,29 @@ class TestSocketManagerConnect:
             patch(
                 "praetor.connection.socket_manager.socket.socket",
                 return_value=mock_sock,
-            ),
+            ) as socket_ctor,
             patch.object(SocketManager, "_is_server_running", return_value=True),
         ):
             mgr = SocketManager("127.0.0.1", 502, "mbtcp")
             mgr.connect()
+            socket_ctor.assert_called_once_with(socket.AF_INET, socket.SOCK_STREAM)
             mock_sock.connect.assert_called_once_with(("127.0.0.1", 502))
             mock_sock.settimeout.assert_called_once_with(0.01)
+
+    def test_connect_uses_udp_socket_for_bacnet(self) -> None:
+        mock_sock = MagicMock()
+        with (
+            patch(
+                "praetor.connection.socket_manager.socket.socket",
+                return_value=mock_sock,
+            ) as socket_ctor,
+            patch.object(SocketManager, "_is_server_running", return_value=True),
+        ):
+            mgr = SocketManager("127.0.0.1", 47808, "bacnet")
+            mgr.connect()
+
+        socket_ctor.assert_called_once_with(socket.AF_INET, socket.SOCK_DGRAM)
+        mock_sock.connect.assert_called_once_with(("127.0.0.1", 47808))
 
     def test_connect_waits_for_cursus_ready(self, _mock_starter: MagicMock) -> None:
         mock_sock = MagicMock()
@@ -92,6 +109,22 @@ class TestSocketManagerSend:
             mgr.connect()
             mgr.send(b"\x01\x02")
             mock_sock.sendall.assert_called_once_with(b"\x01\x02")
+
+    def test_send_uses_send_for_udp_protocols(self) -> None:
+        mock_sock = MagicMock()
+        with (
+            patch(
+                "praetor.connection.socket_manager.socket.socket",
+                return_value=mock_sock,
+            ),
+            patch.object(SocketManager, "_is_server_running", return_value=True),
+        ):
+            mgr = SocketManager("127.0.0.1", 47808, "bacnet")
+            mgr.connect()
+            mgr.send(b"\x01\x02")
+
+        mock_sock.send.assert_called_once_with(b"\x01\x02")
+        mock_sock.sendall.assert_not_called()
 
     def test_send_raises_when_not_connected(self) -> None:
         mgr = SocketManager("127.0.0.1", 502, "mbtcp")

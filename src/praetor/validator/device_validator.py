@@ -23,7 +23,12 @@ class _DeviceValidator:
         """
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
         self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
-        self._socket_manager = SocketManager("localhost", self._protocol_info.custom_port, protocol, timeout=0.05)
+        self._socket_manager = SocketManager(
+            "localhost",
+            self._protocol_info.custom_port,
+            self._protocol_info.protocol_name,
+            timeout=0.05,
+        )
         self._socket_manager.connect()
         self._is_valid_response = is_valid_response
 

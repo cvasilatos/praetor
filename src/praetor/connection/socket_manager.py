@@ -15,6 +15,8 @@ from typing import TYPE_CHECKING, Self, cast
 
 from cursus.starter import Starter
 
+from praetor.protocol_info import ProtocolInfo
+
 if TYPE_CHECKING:
     from decima.logger import CustomLogger
 
@@ -38,10 +40,12 @@ class SocketManager:
         self._port: int = port
         self._timeout: float = timeout
         self._sock: socket.socket | None = None
+        self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
+        self._transport: str = self._protocol_info.transport
 
         self._configure_multiprocessing_start_method()
 
-        self._cursus = Starter(protocol, port=self._port, delay=3)
+        self._cursus = Starter(self._protocol_info.protocol_name, port=self._port, delay=3)
         self._server_thread: Thread = self._cursus.start_server()
         self._wait_for_server_ready()
 
@@ -73,7 +77,8 @@ class SocketManager:
         else:
             self._wait_for_server_ready()
 
-        self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock_type = socket.SOCK_DGRAM if self._transport == "udp" else socket.SOCK_STREAM
+        self._sock = socket.socket(socket.AF_INET, sock_type)
         self._sock.settimeout(self._timeout)
         self._sock.connect((self._host, self._port))
         self.logger.debug(f"Connected to {self._host}:{self._port}")
@@ -112,6 +117,9 @@ class SocketManager:
         """
         if self._sock is None:
             raise RuntimeError("Socket not connected. Call connect() first.")
+        if self._transport == "udp":
+            self._sock.send(data)
+            return
         self._sock.sendall(data)
 
     def receive(self, buffer_size: int = 4096) -> bytes:

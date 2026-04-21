@@ -15,6 +15,7 @@ class TestDeviceValidatorSocketCrashRecovery:
         mock_sock.sendall.side_effect = OSError("Connection reset")
 
         mock_protocol_info = MagicMock()
+        mock_protocol_info.protocol_name = "mbtcp"
         mock_protocol_info.custom_port = 502
         mock_protocol_info.scapy_names = ["modbus"]
 
@@ -49,6 +50,7 @@ class TestDeviceValidatorSocketCrashRecovery:
         mock_sock.recv.side_effect = OSError("Broken pipe")
 
         mock_protocol_info = MagicMock()
+        mock_protocol_info.protocol_name = "mbtcp"
         mock_protocol_info.custom_port = 502
         mock_protocol_info.scapy_names = ["modbus"]
 
@@ -81,6 +83,7 @@ class TestDeviceValidatorSocketCrashRecovery:
         mock_sock.recv.return_value = b"\x00\x01"
 
         mock_protocol_info = MagicMock()
+        mock_protocol_info.protocol_name = "mbtcp"
         mock_protocol_info.custom_port = 502
         mock_protocol_info.scapy_names = ["modbus"]
 

@@ -9,4 +9,13 @@ def test_protocol_info_lookup_sanity() -> None:
 
     assert info is ProtocolInfo.MBTCP
     assert info.port == 502
+    assert info.transport == "tcp"
     assert "modbus" in info.scapy_names
+
+
+def test_protocol_info_lookup_for_bacnet_uses_udp() -> None:
+    """Ensure BACnet metadata exposes UDP transport."""
+    info = ProtocolInfo.from_name("bacnet")
+
+    assert info is ProtocolInfo.BACNET
+    assert info.transport == "udp"
