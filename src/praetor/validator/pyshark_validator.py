@@ -2,7 +2,9 @@
 
 import asyncio
 import logging
+import os
 import secrets
+import threading
 from contextlib import suppress
 from typing import TYPE_CHECKING, cast
 
@@ -38,17 +40,18 @@ class _PysharkValidator:
         self.protocol: str = protocol
         self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
         self.scapy_names: list[str] = self._protocol_info.scapy_names
+        self._owns_event_loop = False
 
         override_prefs: dict[str, str] = {}
         if self.protocol == "mbtcp":
             override_prefs["mbtcp.tcp.port"] = str(self._protocol_info.port)
 
+        resolved_event_loop = event_loop or self._resolve_event_loop()
         capture_kwargs: dict[str, object] = {
             "override_prefs": override_prefs,
             "custom_parameters": {"-o": "tcp.analyze_sequence_numbers:FALSE"},
+            "eventloop": resolved_event_loop,
         }
-        if event_loop is not None:
-            capture_kwargs["eventloop"] = event_loop
 
         self._cap: pyshark.InMemCapture | None = pyshark.InMemCapture(**capture_kwargs)
 
@@ -57,6 +60,25 @@ class _PysharkValidator:
 
         self._next_tcp_seq: int = 1
         self._next_tcp_ack: int = 1
+
+    def _resolve_event_loop(self) -> asyncio.AbstractEventLoop:
+        """Reuse the active loop or create a private one for synchronous callers."""
+        with suppress(RuntimeError):
+            return asyncio.get_running_loop()
+
+        with suppress(RuntimeError):
+            return asyncio.get_event_loop()
+
+        event_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(event_loop)
+        self._owns_event_loop = True
+
+        if os.name == "posix" and threading.current_thread() is threading.main_thread() and hasattr(asyncio, "SafeChildWatcher"):
+            with suppress(Exception):
+                asyncio.set_child_watcher(asyncio.SafeChildWatcher())
+                asyncio.get_child_watcher().attach_loop(event_loop)
+
+        return event_loop
 
     async def _close_capture_async(self, capture: pyshark.InMemCapture) -> None:
         """Release tshark subprocess state without waiting forever on pyshark tasks."""
@@ -91,6 +113,14 @@ class _PysharkValidator:
                 capture.close()
 
         self._cap = None
+
+        if self._owns_event_loop and isinstance(event_loop, asyncio.AbstractEventLoop) and not event_loop.is_closed():
+            with suppress(Exception):
+                current_event_loop = asyncio.get_event_loop()
+                if current_event_loop is event_loop:
+                    asyncio.set_event_loop(None)
+            with suppress(Exception):
+                event_loop.close()
 
     def __del__(self) -> None:
         """Clean up resources when the ValidatorBase instance is destroyed."""

@@ -32,3 +32,8 @@ class Praetor:
     def pyshark_validator(self) -> _PysharkValidator:
         """Return the PySharkValidator instance."""
         return self._pyshark_validator
+
+    def __del__(self) -> None:
+        """Clean up resources when the Praetor instance is deleted."""
+        self._device_validator.close()
+        self._pyshark_validator.close()
