@@ -1,3 +1,3 @@
 # API Reference
 
-::: praetord
+::: praetor
