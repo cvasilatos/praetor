@@ -28,5 +28,5 @@ repos:
       - id: check-mkdocs
         name: check-mkdocs
         pass_filenames: false
-        entry: mkdocs build --strict
+        entry: uv run mkdocs build --strict
         language: system
