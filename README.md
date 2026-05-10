@@ -1,5 +1,11 @@
 # Praetor
 
+[![Tests](https://github.com/cvasilatos/praetor/actions/workflows/tests.yml/badge.svg)](https://github.com/cvasilatos/praetor/actions/workflows/tests.yml)
+[![Build](https://github.com/cvasilatos/praetor/actions/workflows/build.yml/badge.svg)](https://github.com/cvasilatos/praetor/actions/workflows/build.yml)
+[![Docs](https://github.com/cvasilatos/praetor/actions/workflows/docs.yml/badge.svg)](https://github.com/cvasilatos/praetor/actions/workflows/docs.yml)
+![Python](https://img.shields.io/badge/python-3.14-blue.svg)
+![Package Manager](https://img.shields.io/badge/package%20manager-uv-5c2d91.svg)
+
 Praetor validates industrial protocol payloads in two complementary ways:
 
 - Sends request payloads to a local [Cursus](https://github.com/cvasilatos/cursus)-managed protocol server and checks the returned response with a user-provided callback.
