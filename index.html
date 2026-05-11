@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>Praetor</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> Praetor
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-start">Quick Start</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#validators">Validators</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#combined-validator">Combined Validator</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#device-validator">Device Validator</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pyshark-validator">PyShark Validator</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#supported-protocols">Supported Protocols</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#error-handling">Error Handling</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#resource-cleanup">Resource Cleanup</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#logging">Logging</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#development">Development</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Reference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="api/praetor/">Praetor</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">Praetor</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="praetor">Praetor</h1>
+<p><a href="https://github.com/cvasilatos/praetor/actions/workflows/tests.yml"><img alt="Tests" src="https://github.com/cvasilatos/praetor/actions/workflows/tests.yml/badge.svg" /></a>
+<a href="https://github.com/cvasilatos/praetor/actions/workflows/build.yml"><img alt="Build" src="https://github.com/cvasilatos/praetor/actions/workflows/build.yml/badge.svg" /></a>
+<a href="https://github.com/cvasilatos/praetor/actions/workflows/docs.yml"><img alt="Docs" src="https://github.com/cvasilatos/praetor/actions/workflows/docs.yml/badge.svg" /></a>
+<img alt="Python" src="https://img.shields.io/badge/python-3.14-blue.svg" />
+<img alt="Package Manager" src="https://img.shields.io/badge/package%20manager-uv-5c2d91.svg" /></p>
+<p>Praetor validates industrial protocol payloads in two complementary ways:</p>
+<ul>
+<li>Sends request payloads to a local <a href="https://github.com/cvasilatos/cursus">Cursus</a>-managed protocol server and checks the returned response with a user-provided callback.</li>
+<li>Parses request or response payloads with PyShark/Wireshark and fails when Wireshark reports malformed packets or when the expected protocol layers are missing.</li>
+</ul>
+<p>The package is intended for fuzzers, generators, and test suites that need a quick "does this payload still look like this protocol?" check before keeping or mutating a packet.</p>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>Python <code>&gt;=3.14</code></li>
+<li><code>tshark</code> installed and available on <code>PATH</code> for PyShark packet parsing</li>
+<li>Network access during installation if <code>uv</code> needs to fetch the Git-based <code>decima</code> and <code>cursus</code> dependencies</li>
+<li>Available local ports for the protocol emulators listed below</li>
+</ul>
+<p>Verify the Wireshark CLI dependency before using the PyShark validator:</p>
+<pre><code class="language-sh">tshark -v
+</code></pre>
+<p>On macOS with Homebrew, <code>tshark</code> is installed with Wireshark:</p>
+<pre><code class="language-sh">brew install wireshark
+</code></pre>
+<p>On Debian or Ubuntu:</p>
+<pre><code class="language-sh">sudo apt-get install tshark
+</code></pre>
+<h2 id="installation">Installation</h2>
+<p>From a checkout of this repository:</p>
+<pre><code class="language-sh">uv sync
+uv pip install -e .
+</code></pre>
+<p>For development, include the test and tooling groups:</p>
+<pre><code class="language-sh">uv sync --all-groups
+</code></pre>
+<p>If this package is consumed from another project before it is published to a package index, install it from the Git repository or from a local path:</p>
+<pre><code class="language-sh">uv add &quot;praetor @ git+https://github.com/&lt;owner&gt;/praetor.git&quot;
+uv add &quot;praetor @ file:///absolute/path/to/praetor&quot;
+</code></pre>
+<h2 id="quick-start">Quick Start</h2>
+<p>Import <code>Praetor</code> from <code>praetor.praetord</code>:</p>
+<pre><code class="language-python">from praetor.praetord import Praetor
+from praetor.protocol_info import ProtocolInfo
+
+
+def is_valid_mbtcp_response(response_hex: str) -&gt; bool:
+    &quot;&quot;&quot;Accept non-empty Modbus TCP responses that are not exception responses.&quot;&quot;&quot;
+    if len(response_hex) &lt; 16:
+        return False
+
+    function_code = int(response_hex[14:16], 16)
+    return function_code &lt; 0x80
+
+
+validator = Praetor([ProtocolInfo.MBTCP], is_valid_mbtcp_response)
+
+try:
+    request_hex = &quot;000100000006010300000001&quot;
+
+    if validator.combined_validator.validate(request_hex, protocol=&quot;mbtcp&quot;):
+        print(&quot;valid packet&quot;)
+finally:
+    validator.device_validator.close()
+    validator.pyshark_validator.close()
+</code></pre>
+<p>Packets are passed as hexadecimal strings. They should not include a <code>0x</code> prefix; spaces are accepted because Praetor uses Python's <code>bytes.fromhex()</code>.</p>
+<p>Praetor can also validate against more than one protocol. Pass <code>ProtocolInfo</code> values in priority order and either provide one shared response callback or a mapping of protocol names to protocol-specific callbacks:</p>
+<pre><code class="language-python">validator = Praetor(
+    [ProtocolInfo.MBTCP, ProtocolInfo.S7COMM],
+    {
+        &quot;mbtcp&quot;: is_valid_mbtcp_response,
+        &quot;s7comm&quot;: lambda response_hex: bool(response_hex),
+    },
+)
+
+if validator.combined_validator.validate(request_hex, protocol=&quot;mbtcp&quot;):
+    print(&quot;valid Modbus TCP packet&quot;)
+</code></pre>
+<p>Each validation call must specify the packet's protocol. Praetor validates only that protocol for the packet.</p>
+<h2 id="validators">Validators</h2>
+<h3 id="combined-validator">Combined Validator</h3>
+<p><code>validator.combined_validator.validate(packet_hex, protocol="mbtcp")</code> runs both validators and returns <code>True</code> only when both accept the packet.</p>
+<ol>
+<li>Parses <code>packet_hex</code> with PyShark.</li>
+<li>Sends <code>packet_hex</code> to the local protocol server with the device validator.</li>
+</ol>
+<p>Validation failures return <code>False</code>, giving apps that need both validators a single packet-validity check.</p>
+<h3 id="device-validator">Device Validator</h3>
+<p><code>validator.device_validator.validate(packet_hex, protocol="mbtcp")</code> sends <code>packet_hex</code> to a local protocol server and returns the raw response bytes when the response passes your callback.</p>
+<p>The callback passed to <code>Praetor(protocols, is_valid_response)</code> receives the response as a lowercase hex string:</p>
+<pre><code class="language-python">def is_valid_response(response_hex: str) -&gt; bool:
+    return bool(response_hex)
+</code></pre>
+<p>Use the callback to enforce protocol-specific expectations such as transaction IDs, function codes, minimum lengths, or acceptable status bytes.</p>
+<p>The device validator:</p>
+<ul>
+<li>Starts a local Cursus server for each configured protocol.</li>
+<li>Connects to <code>localhost</code> on the protocol's custom port.</li>
+<li>Sends TCP payloads with <code>sendall()</code> and UDP payloads with <code>send()</code>.</li>
+<li>Reconnects the managed socket after <code>OSError</code>, then re-raises the original error so callers can decide whether to retry.</li>
+<li>Raises <code>ValueError</code> when no response is received or when the callback rejects the response.</li>
+</ul>
+<p>When configured with multiple protocols, the device validator starts one local Cursus server per protocol. Each <code>validate(packet_hex, protocol="mbtcp")</code> call validates the packet against exactly one configured protocol.</p>
+<h3 id="pyshark-validator">PyShark Validator</h3>
+<p><code>validator.pyshark_validator.validate(packet_hex, is_request=True, protocol="mbtcp")</code> wraps the payload in Ethernet/IP/TCP or Ethernet/IP/UDP layers, parses it with PyShark, and returns the parsed packet object.</p>
+<p>Use <code>is_request=True</code> for client-to-server payloads and <code>is_request=False</code> for server-to-client payloads:</p>
+<pre><code class="language-python">request_packet = validator.pyshark_validator.validate(&quot;000100000006010300000001&quot;, is_request=True, protocol=&quot;mbtcp&quot;)
+response_packet = validator.pyshark_validator.validate(&quot;000100000005010302000a&quot;, is_request=False, protocol=&quot;mbtcp&quot;)
+</code></pre>
+<p>The PyShark validator:</p>
+<ul>
+<li>Uses the protocol's default port as the destination port for requests.</li>
+<li>Uses the protocol's default port as the source port for responses.</li>
+<li>Uses UDP for BACnet requests and TCP for the other supported protocols.</li>
+<li>Keeps TCP sequence and acknowledgment numbers moving between validations on the same validator instance.</li>
+<li>Raises <code>ValidatorWiresharkError</code> when Wireshark expert info marks the packet as malformed.</li>
+<li>Raises <code>ValidatorError</code> when the expected protocol layer set is not present.</li>
+</ul>
+<p>When configured with multiple protocols, the PyShark validator keeps independent TCP sequence state for each protocol. Each <code>validate(packet_hex, is_request=True, protocol="s7comm")</code> call validates the packet against exactly one configured protocol.</p>
+<p>For independent packet conversations, create a fresh <code>Praetor</code> instance so sequence and acknowledgment state starts over.</p>
+<h2 id="supported-protocols">Supported Protocols</h2>
+<p><code>ProtocolInfo.from_name()</code> accepts either the protocol name or the enum member name, case-insensitively. For example, <code>mbtcp</code> and <code>MBTCP</code> both resolve to the Modbus TCP metadata. Validator constructors accept a non-empty list of <code>ProtocolInfo</code> enum values.</p>
+<table>
+<thead>
+<tr>
+<th>Protocol argument</th>
+<th>Enum name</th>
+<th>Transport</th>
+<th style="text-align: right;">Wireshark/default port</th>
+<th style="text-align: right;">Local emulator port</th>
+<th>Expected layers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mbtcp</code></td>
+<td><code>MBTCP</code></td>
+<td>TCP</td>
+<td style="text-align: right;">502</td>
+<td style="text-align: right;">5020</td>
+<td><code>mbtcp</code>, <code>modbus</code></td>
+</tr>
+<tr>
+<td><code>s7comm</code></td>
+<td><code>S7COMM</code></td>
+<td>TCP</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">10200</td>
+<td><code>s7comm</code></td>
+</tr>
+<tr>
+<td><code>iec104</code></td>
+<td><code>IEC104</code></td>
+<td>TCP</td>
+<td style="text-align: right;">2404</td>
+<td style="text-align: right;">24040</td>
+<td><code>iec60870_104</code></td>
+</tr>
+<tr>
+<td><code>dnp3</code></td>
+<td><code>DNP3</code></td>
+<td>TCP</td>
+<td style="text-align: right;">20000</td>
+<td style="text-align: right;">20000</td>
+<td><code>dnp3</code></td>
+</tr>
+<tr>
+<td><code>enip</code></td>
+<td><code>ENIP</code></td>
+<td>TCP</td>
+<td style="text-align: right;">44818</td>
+<td style="text-align: right;">44818</td>
+<td><code>enip</code></td>
+</tr>
+<tr>
+<td><code>bacnet</code></td>
+<td><code>BACNET</code></td>
+<td>UDP</td>
+<td style="text-align: right;">47808</td>
+<td style="text-align: right;">47808</td>
+<td><code>bvlc</code>, <code>bacnet</code>, <code>bacapp</code></td>
+</tr>
+<tr>
+<td><code>hart</code></td>
+<td><code>HART_IP</code></td>
+<td>TCP</td>
+<td style="text-align: right;">5094</td>
+<td style="text-align: right;">5094</td>
+<td><code>hart_ip</code></td>
+</tr>
+<tr>
+<td><code>ads</code></td>
+<td><code>ADS</code></td>
+<td>TCP</td>
+<td style="text-align: right;">48898</td>
+<td style="text-align: right;">48898</td>
+<td><code>ams</code></td>
+</tr>
+</tbody>
+</table>
+<p>Unknown protocol names raise <code>ValueError</code>.</p>
+<h2 id="error-handling">Error Handling</h2>
+<p>Import validation errors directly from their modules:</p>
+<pre><code class="language-python">from praetor.exceptions.validator_error import ValidatorError
+from praetor.exceptions.validator_wireshark_error import ValidatorWiresharkError
+</code></pre>
+<p>Both validation error classes expose:</p>
+<ul>
+<li><code>pdu</code>: the parsed packet that failed validation.</li>
+<li><code>is_request</code>: whether the failed packet was parsed as a request.</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-python">from praetor.exceptions.validator_error import ValidatorError
+from praetor.exceptions.validator_wireshark_error import ValidatorWiresharkError
+from praetor.praetord import Praetor
+from praetor.protocol_info import ProtocolInfo
+
+
+validator = Praetor([ProtocolInfo.MBTCP], lambda response_hex: bool(response_hex))
+
+try:
+    validator.pyshark_validator.validate(&quot;deadbeef&quot;, is_request=True, protocol=&quot;mbtcp&quot;)
+except ValidatorWiresharkError as exc:
+    print(f&quot;Wireshark rejected request={exc.is_request}: {exc}&quot;)
+except ValidatorError as exc:
+    print(f&quot;Expected protocol layers were missing: {exc.pdu}&quot;)
+finally:
+    validator.device_validator.close()
+    validator.pyshark_validator.close()
+</code></pre>
+<p>Other common exceptions:</p>
+<ul>
+<li><code>ValueError</code>: invalid hex, unknown protocol, empty device response, or callback-rejected response.</li>
+<li><code>OSError</code>: socket send/receive failure. Praetor reconnects before re-raising.</li>
+<li><code>RuntimeError</code>: attempting to use a closed PyShark validator.</li>
+<li><code>TimeoutError</code>: the local Cursus server did not become ready within the startup timeout.</li>
+</ul>
+<h2 id="resource-cleanup">Resource Cleanup</h2>
+<p><code>Praetor</code> owns a socket connection, a local protocol server, and a PyShark capture. Close both validators when done:</p>
+<pre><code class="language-python">validator.device_validator.close()
+validator.pyshark_validator.close()
+</code></pre>
+<p>The classes also perform best-effort cleanup in destructors, but explicit cleanup is preferred in scripts, tests, and long-running processes.</p>
+<h2 id="logging">Logging</h2>
+<p>Praetor uses standard Python loggers named after each class module, such as <code>praetor.praetord.Praetor</code> and <code>praetor.validator.pyshark_validator._PysharkValidator</code>.</p>
+<p>Enable debug logs while troubleshooting packet parsing or socket reconnects:</p>
+<pre><code class="language-python">import logging
+
+logging.basicConfig(level=logging.DEBUG)
+</code></pre>
+<h2 id="development">Development</h2>
+<p>Install all development dependencies:</p>
+<pre><code class="language-sh">uv sync --all-groups
+</code></pre>
+<p>Run the checks used by the repository hooks:</p>
+<pre><code class="language-sh">uv run ruff check
+uv run ruff format --check
+uv run ty check
+uv run pytest
+uv run mkdocs build --strict
+</code></pre>
+<p>If <code>pre-commit</code> is installed, run the full hook set:</p>
+<pre><code class="language-sh">pre-commit run --all-files
+</code></pre>
+<p>Build or serve the documentation locally:</p>
+<pre><code class="language-sh">uv run mkdocs build --strict
+uv run mkdocs serve
+</code></pre>
+<p>The docs home page includes this README, so changes here are reflected in the generated documentation site.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="api/praetor/" class="btn btn-neutral float-right" title="Praetor">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="api/praetor/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-05-11 10:18:33.648900+00:00
+-->
