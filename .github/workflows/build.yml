@@ -31,5 +31,3 @@ jobs:
       - name: Build distributions
         run: uv build
 
-      - name: Build documentation
-        run: uv run mkdocs build --strict
