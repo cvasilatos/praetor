@@ -9,15 +9,13 @@ nav:
   - API Reference:
     - Praetor: api/praetor.md
 
+markdown_extensions:
+  - admonition
+  - pymdownx.snippets
+
 plugins:
   - search
-  - include-markdown:
-      opening_tag: "{!"
-      closing_tag: "!}"
   - mkdocstrings:
         handlers:
           python:
             paths: ["src/praetor/"]
-
-markdown_extensions:
-  - admonition
