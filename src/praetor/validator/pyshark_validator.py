@@ -28,12 +28,7 @@ from praetor.protocol_info import ProtocolInfo
 class _PysharkValidator:
     """Base class for protocol validation using Cursusd and Wireshark."""
 
-    def __init__(
-        self,
-        protocol: str,
-        *,
-        event_loop: asyncio.AbstractEventLoop | None = None,
-    ) -> None:
+    def __init__(self, protocol: str, *, event_loop: asyncio.AbstractEventLoop | None = None) -> None:
         """Initialize the ValidatorBase with the specified protocol."""
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
 
@@ -164,21 +159,9 @@ class _PysharkValidator:
             if self.protocol == "bacnet":
                 tcp_layer = UDP(sport=47808, dport=self._protocol_info.port)
             else:
-                tcp_layer = TCP(
-                    sport=secrets.randbelow(65535 - 1024 + 1) + 1024,
-                    dport=self._protocol_info.port,
-                    flags="PA",
-                    seq=seq,
-                    ack=ack,
-                )
+                tcp_layer = TCP(sport=secrets.randbelow(65535 - 1024 + 1) + 1024, dport=self._protocol_info.port, flags="PA", seq=seq, ack=ack)
         else:
-            tcp_layer = TCP(
-                sport=self._protocol_info.port,
-                dport=secrets.randbelow(65535 - 1024 + 1) + 1024,
-                flags="PA",
-                seq=seq,
-                ack=ack,
-            )
+            tcp_layer = TCP(sport=self._protocol_info.port, dport=secrets.randbelow(65535 - 1024 + 1) + 1024, flags="PA", seq=seq, ack=ack)
 
         if self._cap is None:
             raise RuntimeError("Pyshark validator is closed.")

@@ -82,13 +82,8 @@ validator = Praetor("mbtcp", is_valid_mbtcp_response)
 try:
     request_hex = "000100000006010300000001"
 
-    response_bytes = validator.device_validator.validate(request_hex)
-    request_packet = validator.pyshark_validator.validate(request_hex, is_request=True)
-    response_packet = validator.pyshark_validator.validate(response_bytes.hex(), is_request=False)
-
-    print(response_bytes.hex())
-    print(request_packet)
-    print(response_packet)
+    if validator.combined_validator.validate(request_hex):
+        print("valid packet")
 finally:
     validator.device_validator.close()
     validator.pyshark_validator.close()
@@ -97,6 +92,15 @@ finally:
 Packets are passed as hexadecimal strings. They should not include a `0x` prefix; spaces are accepted because Praetor uses Python's `bytes.fromhex()`.
 
 ## Validators
+
+### Combined Validator
+
+`validator.combined_validator.validate(packet_hex)` runs both validators and returns `True` only when both accept the packet:
+
+1. Parses `packet_hex` with PyShark.
+2. Sends `packet_hex` to the local protocol server with the device validator.
+
+Validation failures return `False`, giving apps that need both validators a single packet-validity check.
 
 ### Device Validator
 
