@@ -37,11 +37,11 @@ class SocketManager:
         """
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
         self._host: str = host
-        self._port: int = port
         self._timeout: float = timeout
         self._sock: socket.socket | None = None
         self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
         self._transport: str = self._protocol_info.transport
+        self._port: int = self._next_available_port(port)
 
         self._configure_multiprocessing_start_method()
 
@@ -61,6 +61,28 @@ class SocketManager:
         current_method = multiprocessing.get_start_method(allow_none=True)
         if current_method != "fork":
             multiprocessing.set_start_method("fork", force=True)
+
+    def _next_available_port(self, port: int) -> int:
+        """Return the first available port at or after the requested port."""
+        candidate_port = port
+        while candidate_port <= 65535:  # noqa: PLR2004
+            if self._is_port_available(candidate_port):
+                if candidate_port != port:
+                    self.logger.info(f"Port {port} is occupied. Using {candidate_port} for {self._protocol_info.protocol_name}.")
+                return candidate_port
+            candidate_port += 1
+
+        raise RuntimeError(f"No available port found for {self._protocol_info.protocol_name} starting from {port}")
+
+    def _is_port_available(self, port: int) -> bool:
+        """Return whether cursus can bind the configured host/transport port."""
+        sock_type = socket.SOCK_DGRAM if self._transport == "udp" else socket.SOCK_STREAM
+        with socket.socket(socket.AF_INET, sock_type) as sock:
+            try:
+                sock.bind((self._host, port))
+            except OSError:
+                return False
+        return True
 
     def _watchdog(self) -> None:
         """Monitors the server thread."""

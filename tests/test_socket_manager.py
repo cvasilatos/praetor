@@ -11,7 +11,10 @@ from praetor.connection.socket_manager import SocketManager
 @pytest.fixture(autouse=True)
 def _mock_starter() -> types.GeneratorType:
     """Prevent tests from starting a real protocol server."""
-    with patch("praetor.connection.socket_manager.Starter") as starter_cls:
+    with (
+        patch("praetor.connection.socket_manager.Starter") as starter_cls,
+        patch.object(SocketManager, "_is_port_available", return_value=True),
+    ):
         starter = starter_cls.return_value
         starter.wait_until_ready.return_value = True
         starter.start_server.return_value.is_alive.return_value = True
@@ -24,6 +27,16 @@ class TestSocketManagerConnect:
     def test_init_waits_for_cursus_ready(self, _mock_starter: MagicMock) -> None:
         SocketManager("127.0.0.1", 502, "mbtcp")
         _mock_starter.wait_until_ready.assert_called_once_with(timeout=10.0)
+
+    def test_init_uses_first_available_incremented_port(
+        self, _mock_starter: MagicMock
+    ) -> None:
+        with patch.object(
+            SocketManager, "_is_port_available", side_effect=[False, False, True]
+        ):
+            mgr = SocketManager("127.0.0.1", 502, "mbtcp")
+
+        assert mgr._port == 504  # noqa: PLR2004
 
     def test_connect_creates_socket(self) -> None:
         mock_sock = MagicMock()
