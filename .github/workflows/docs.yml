@@ -1,29 +1,28 @@
 name: Docs
 
-on:
+"on":
   push:
     branches:
       - main
   pull_request:
-  page_build:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: docs
+  cancel-in-progress: true
 
 jobs:
-  build:
+  docs:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -33,31 +32,18 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
       - name: Sync dependencies
         run: uv sync --locked
 
       - name: Build documentation
         run: uv run mkdocs build --strict
 
-      - name: Upload Pages artifact
-        if: github.event_name == 'page_build' || (github.event_name != 'pull_request' && github.ref == 'refs/heads/main')
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: site
+      - name: Configure Git author
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-  deploy:
-    if: github.event_name == 'page_build' || (github.event_name != 'pull_request' && github.ref == 'refs/heads/main')
-    needs: build
-    runs-on: ubuntu-latest
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+      - name: Deploy documentation
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: uv run mkdocs gh-deploy --force
