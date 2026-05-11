@@ -8,6 +8,7 @@ from unittest.mock import patch
 
 import pytest
 
+from praetor.protocol_info import ProtocolInfo
 from praetor.validator.pyshark_validator import _PysharkValidator
 
 
@@ -33,7 +34,6 @@ def test_init_creates_private_event_loop_when_no_current_loop(
     """Synchronous callers should get a private loop on Python 3.14+."""
     asyncio.set_event_loop(None)
 
-    mock_protocol_info = SimpleNamespace(port=502, scapy_names=["modbus"])
     capture: SimpleNamespace | None = None
 
     def fake_inmem_capture(**kwargs: object) -> SimpleNamespace:
@@ -43,15 +43,11 @@ def test_init_creates_private_event_loop_when_no_current_loop(
 
     with (
         patch(
-            "praetor.validator.pyshark_validator.ProtocolInfo.from_name",
-            return_value=mock_protocol_info,
-        ),
-        patch(
             "praetor.validator.pyshark_validator.pyshark.InMemCapture",
             side_effect=fake_inmem_capture,
         ),
     ):
-        validator = _PysharkValidator("mbtcp")
+        validator = _PysharkValidator([ProtocolInfo.MBTCP])
 
     assert capture is not None
     assert validator._owns_event_loop is True
@@ -70,7 +66,6 @@ def test_init_uses_supplied_event_loop_without_owning_it(
 ) -> None:
     """Callers can supply an event loop that remains under their control."""
     event_loop = asyncio.new_event_loop()
-    mock_protocol_info = SimpleNamespace(port=502, scapy_names=["modbus"])
     capture: SimpleNamespace | None = None
 
     def fake_inmem_capture(**kwargs: object) -> SimpleNamespace:
@@ -80,15 +75,11 @@ def test_init_uses_supplied_event_loop_without_owning_it(
 
     with (
         patch(
-            "praetor.validator.pyshark_validator.ProtocolInfo.from_name",
-            return_value=mock_protocol_info,
-        ),
-        patch(
             "praetor.validator.pyshark_validator.pyshark.InMemCapture",
             side_effect=fake_inmem_capture,
         ),
     ):
-        validator = _PysharkValidator("mbtcp", event_loop=event_loop)
+        validator = _PysharkValidator([ProtocolInfo.MBTCP], event_loop=event_loop)
 
     assert capture is not None
     assert validator._owns_event_loop is False

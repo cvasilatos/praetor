@@ -1,5 +1,4 @@
 import logging
-from collections.abc import Callable
 from contextlib import suppress
 from typing import TYPE_CHECKING, cast
 
@@ -7,36 +6,52 @@ if TYPE_CHECKING:
     from decima import CustomLogger
 
 from praetor.connection.socket_manager import SocketManager
-from praetor.protocol_info import ProtocolInfo
+from praetor.protocol_info import ProtocolInfo, ResponseValidators, normalize_protocol_infos, resolve_response_validator
 
 
 class _DeviceValidator:
     """Validator class for validating protocol packets against a live device using Wireshark parsing."""
 
-    def __init__(self, protocol: str, is_valid_response: Callable) -> None:
-        """Initialize the DeviceValidator with the specified protocol.
+    def __init__(self, protocols: list[ProtocolInfo], is_valid_response: ResponseValidators) -> None:
+        """Initialize the DeviceValidator with the specified protocols.
 
         Args:
-            protocol (str): The name of the protocol to validate against (e.g., "mbtcp", "s7comm", etc.).
-            is_valid_response (Callable): A callable that takes a bytes object (the response from the device) and returns a boolean indicating
-            whether the response is valid for the given protocol.
+            protocols: Protocol names to validate against.
+            is_valid_response: A response validator callable shared by all protocols, or a mapping of protocol names to protocol-specific validators.
         """
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
-        self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
-        self._socket_manager = SocketManager("localhost", self._protocol_info.custom_port, self._protocol_info.protocol_name, timeout=0.05)
-        self._socket_manager.connect()
-        self._is_valid_response = is_valid_response
+        self._protocol_infos: tuple[ProtocolInfo, ...] = normalize_protocol_infos(protocols)
+        self._response_validators = {protocol_info: resolve_response_validator(is_valid_response, protocol_info) for protocol_info in self._protocol_infos}
+        self._socket_managers: dict[ProtocolInfo, SocketManager] = {}
+
+        try:
+            for protocol_info in self._protocol_infos:
+                socket_manager = SocketManager("localhost", protocol_info.custom_port, protocol_info.protocol_name, timeout=0.05)
+                socket_manager.connect()
+                self._socket_managers[protocol_info] = socket_manager
+        except Exception:
+            self.close()
+            raise
 
     def close(self) -> None:
         """Release the managed socket and stop the local cursus server."""
-        self._socket_manager.shutdown()
+        for socket_manager in self._socket_managers.values():
+            socket_manager.shutdown()
+        self._socket_managers.clear()
 
     def __del__(self) -> None:
         """Best-effort cleanup for cached validators."""
         with suppress(Exception):
             self.close()
 
-    def validate(self, packet: str) -> bytes:
+    def _selected_protocol_info(self, protocol: str) -> ProtocolInfo:
+        """Return the protocol metadata selected for validation."""
+        requested_protocol = ProtocolInfo.from_name(protocol)
+        if requested_protocol not in self._protocol_infos:
+            raise ValueError(f"Protocol is not configured for this validator: {protocol}")
+        return requested_protocol
+
+    def validate(self, packet: str, *, protocol: str) -> bytes:
         """Validate the seed packet by sending it to the target server and analyzing the response.
 
         Returns:
@@ -52,19 +67,26 @@ class _DeviceValidator:
             that the seed cannot be dissected. If the socket crashes, all socket resources are closed and the connection is re-established before re-raising.
 
         """
+        protocol_info = self._selected_protocol_info(protocol)
+        return self._validate_protocol(packet, protocol_info)
+
+    def _validate_protocol(self, packet: str, protocol_info: ProtocolInfo) -> bytes:
+        """Validate the packet against one configured protocol."""
         response: bytes = b""
+        socket_manager = self._socket_managers[protocol_info]
         try:
-            self._socket_manager.send(bytes.fromhex(packet))
-            response: bytes = self._socket_manager.receive(1024)
+            socket_manager.send(bytes.fromhex(packet))
+            response: bytes = socket_manager.receive(1024)
             if len(response) == 0:
                 raise ValueError(f"No response received for packet: {packet}")
         except OSError:
             self.logger.debug("Socket error detected, reconnecting...")
-            self._socket_manager.reconnect()
+            socket_manager.reconnect()
             raise
 
-        if not self._is_valid_response(response.hex()):
+        is_valid_response = self._response_validators[protocol_info]
+        if not is_valid_response(response.hex()):
             raise ValueError(f"No response or unexpected response for packet: {packet}, cannot dissect.")
 
-        self.logger.debug(f"[+] Dissecting packet: {packet} : {response.hex()} for protocol layers: {self._protocol_info.scapy_names}")
+        self.logger.debug(f"[+] Dissecting packet: {packet} : {response.hex()} for protocol layers: {protocol_info.scapy_names}")
         return response

@@ -6,6 +6,7 @@ import os
 import secrets
 import threading
 from contextlib import suppress
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast
 
 import pyshark
@@ -22,24 +23,39 @@ from scapy.layers.l2 import Ether
 
 from praetor.exceptions.validator_error import ValidatorError
 from praetor.exceptions.validator_wireshark_error import ValidatorWiresharkError
-from praetor.protocol_info import ProtocolInfo
+from praetor.protocol_info import ProtocolInfo, normalize_protocol_infos, protocol_names
+
+
+@dataclass
+class _TcpState:
+    """TCP sequence state for one configured protocol."""
+
+    seq: int = 0
+    ack: int = 0
+    next_seq: int = 1
+    next_ack: int = 1
 
 
 class _PysharkValidator:
     """Base class for protocol validation using Cursusd and Wireshark."""
 
-    def __init__(self, protocol: str, *, event_loop: asyncio.AbstractEventLoop | None = None) -> None:
-        """Initialize the ValidatorBase with the specified protocol."""
+    def __init__(self, protocols: list[ProtocolInfo], *, event_loop: asyncio.AbstractEventLoop | None = None) -> None:
+        """Initialize the ValidatorBase with the specified protocols."""
         self.logger: CustomLogger = cast("CustomLogger", logging.getLogger(f"{self.__class__.__module__}.{self.__class__.__name__}"))
 
-        self.protocol: str = protocol
-        self._protocol_info: ProtocolInfo = ProtocolInfo.from_name(protocol)
+        self._protocol_infos: tuple[ProtocolInfo, ...] = normalize_protocol_infos(protocols)
+        self._protocol_names: tuple[str, ...] = protocol_names(self._protocol_infos)
+        self.protocol: str = self._protocol_names[0]
+        self.protocols: tuple[str, ...] = self._protocol_names
+        self._protocol_info: ProtocolInfo = self._protocol_infos[0]
         self.scapy_names: list[str] = self._protocol_info.scapy_names
         self._owns_event_loop = False
 
         override_prefs: dict[str, str] = {}
-        if self.protocol == "mbtcp":
-            override_prefs["mbtcp.tcp.port"] = str(self._protocol_info.port)
+        for protocol_info in self._protocol_infos:
+            if protocol_info.protocol_name == "mbtcp":
+                override_prefs["mbtcp.tcp.port"] = str(protocol_info.port)
+                break
 
         resolved_event_loop = event_loop or self._resolve_event_loop()
         capture_kwargs: dict[str, object] = {
@@ -52,9 +68,9 @@ class _PysharkValidator:
 
         self._tcp_seq: int = 0
         self._tcp_ack: int = 0
-
         self._next_tcp_seq: int = 1
         self._next_tcp_ack: int = 1
+        self._tcp_states: dict[str, _TcpState] = {protocol_info.protocol_name: _TcpState() for protocol_info in self._protocol_infos}
 
     def _resolve_event_loop(self) -> asyncio.AbstractEventLoop:
         """Reuse the active loop or create a private one for synchronous callers."""
@@ -122,12 +138,20 @@ class _PysharkValidator:
         with suppress(Exception):
             self.close()
 
-    def validate(self, packet: str, *, is_request: bool) -> BaseLayer:
+    def _selected_protocol_info(self, protocol: str) -> ProtocolInfo:
+        """Return the protocol metadata selected for validation."""
+        requested_protocol = ProtocolInfo.from_name(protocol)
+        if requested_protocol not in self._protocol_infos:
+            raise ValueError(f"Protocol is not configured for this validator: {protocol}")
+        return requested_protocol
+
+    def validate(self, packet: str, *, is_request: bool, protocol: str) -> BaseLayer:
         """Validate the given packet bytes (in hex) as either a request or response.
 
         Args:
             packet: str - The packet bytes in hexadecimal string format.
             is_request: bool - Whether to treat the packet as a request (True) or response (False).
+            protocol: Configured protocol name to validate against.
 
         Returns:
             BaseLayer - The protocol-specific layer if validation is successful.
@@ -141,27 +165,31 @@ class _PysharkValidator:
             layers and Wireshark expert info.
 
         """
+        protocol_info = self._selected_protocol_info(protocol)
+        return self._validate_protocol(packet, is_request=is_request, protocol_info=protocol_info)
+
+    def _transport_layer(self, protocol_info: ProtocolInfo, *, is_request: bool, seq: int, ack: int) -> TCP | UDP:
+        """Build the transport layer for a protocol validation attempt."""
+        if protocol_info.transport == "udp":
+            return UDP(sport=protocol_info.port, dport=protocol_info.port)
+        if is_request:
+            return TCP(sport=secrets.randbelow(65535 - 1024 + 1) + 1024, dport=protocol_info.port, flags="PA", seq=seq, ack=ack)
+        return TCP(sport=protocol_info.port, dport=secrets.randbelow(65535 - 1024 + 1) + 1024, flags="PA", seq=seq, ack=ack)
+
+    def _validate_protocol(self, packet: str, *, is_request: bool, protocol_info: ProtocolInfo) -> BaseLayer:
+        """Validate the packet against one configured protocol."""
         payload_bytes: bytes = bytes.fromhex(packet)
         payload_len: int = len(payload_bytes)
 
-        seq: int = self._tcp_seq
-        ack: int = self._tcp_ack
+        tcp_state = self._tcp_states[protocol_info.protocol_name]
+        seq: int = tcp_state.seq
+        ack: int = tcp_state.ack
 
         step: int = max(1, payload_len)
         next_seq: int = (seq + step) % (2**32)
         next_ack: int = (ack + step) % (2**32)
 
-        self._next_tcp_seq = next_seq
-        self._next_tcp_ack = next_ack
-
-        tcp_layer: TCP | UDP | None = None
-        if is_request:
-            if self.protocol == "bacnet":
-                tcp_layer = UDP(sport=47808, dport=self._protocol_info.port)
-            else:
-                tcp_layer = TCP(sport=secrets.randbelow(65535 - 1024 + 1) + 1024, dport=self._protocol_info.port, flags="PA", seq=seq, ack=ack)
-        else:
-            tcp_layer = TCP(sport=self._protocol_info.port, dport=secrets.randbelow(65535 - 1024 + 1) + 1024, flags="PA", seq=seq, ack=ack)
+        tcp_layer = self._transport_layer(protocol_info, is_request=is_request, seq=seq, ack=ack)
 
         if self._cap is None:
             raise RuntimeError("Pyshark validator is closed.")
@@ -171,13 +199,10 @@ class _PysharkValidator:
         parsed_packet: Packet = self._cap.parse_packet(bytes(full_packet))
         self._cap.clear()
 
-        self._tcp_seq = next_seq
-        self._tcp_ack = next_ack
-
         self.logger.debug(f"Validating packet: {packet}, is_request={is_request}: {bytes(full_packet).hex()}")
         layer: BaseLayer
         for layer in parsed_packet.layers:
-            if layer.layer_name not in {"tcp", "eth", "ip"}:
+            if layer.layer_name not in {"tcp", "udp", "eth", "ip"}:
                 self.logger.debug(f"Validate protocol related layer (is_request={is_request}): {layer}")
 
         temp_layer: BaseLayer
@@ -189,9 +214,19 @@ class _PysharkValidator:
                 raise ValidatorWiresharkError(f"Validation failed, Error: {error_msg} (Group: {error_group}, Severity: {error_severity})", parsed_packet, is_request=is_request)
 
         layer_names: list[str] = [layer.layer_name for layer in cast("list[BaseLayer]", parsed_packet.layers)]
-        is_contained: bool = set(self.scapy_names).issubset(set(layer_names))
+        is_contained: bool = set(protocol_info.scapy_names).issubset(set(layer_names))
         if not is_contained:
-            raise ValidatorError(f"Validation failed, no layer '{self.scapy_names}'", parsed_packet, is_request=is_request)
+            raise ValidatorError(f"Validation failed, no layer '{protocol_info.scapy_names}'", parsed_packet, is_request=is_request)
+
+        tcp_state.seq = next_seq
+        tcp_state.ack = next_ack
+        tcp_state.next_seq = next_seq
+        tcp_state.next_ack = next_ack
+        if protocol_info is self._protocol_info:
+            self._tcp_seq = next_seq
+            self._tcp_ack = next_ack
+            self._next_tcp_seq = next_seq
+            self._next_tcp_ack = next_ack
 
         self.logger.trace(f"Validation successful for packet {is_request}: {parsed_packet}")
 

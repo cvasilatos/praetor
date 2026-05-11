@@ -66,6 +66,7 @@ Import `Praetor` from `praetor.praetord`:
 
 ```python
 from praetor.praetord import Praetor
+from praetor.protocol_info import ProtocolInfo
 
 
 def is_valid_mbtcp_response(response_hex: str) -> bool:
@@ -77,12 +78,12 @@ def is_valid_mbtcp_response(response_hex: str) -> bool:
     return function_code < 0x80
 
 
-validator = Praetor("mbtcp", is_valid_mbtcp_response)
+validator = Praetor([ProtocolInfo.MBTCP], is_valid_mbtcp_response)
 
 try:
     request_hex = "000100000006010300000001"
 
-    if validator.combined_validator.validate(request_hex):
+    if validator.combined_validator.validate(request_hex, protocol="mbtcp"):
         print("valid packet")
 finally:
     validator.device_validator.close()
@@ -91,11 +92,28 @@ finally:
 
 Packets are passed as hexadecimal strings. They should not include a `0x` prefix; spaces are accepted because Praetor uses Python's `bytes.fromhex()`.
 
+Praetor can also validate against more than one protocol. Pass `ProtocolInfo` values in priority order and either provide one shared response callback or a mapping of protocol names to protocol-specific callbacks:
+
+```python
+validator = Praetor(
+    [ProtocolInfo.MBTCP, ProtocolInfo.S7COMM],
+    {
+        "mbtcp": is_valid_mbtcp_response,
+        "s7comm": lambda response_hex: bool(response_hex),
+    },
+)
+
+if validator.combined_validator.validate(request_hex, protocol="mbtcp"):
+    print("valid Modbus TCP packet")
+```
+
+Each validation call must specify the packet's protocol. Praetor validates only that protocol for the packet.
+
 ## Validators
 
 ### Combined Validator
 
-`validator.combined_validator.validate(packet_hex)` runs both validators and returns `True` only when both accept the packet:
+`validator.combined_validator.validate(packet_hex, protocol="mbtcp")` runs both validators and returns `True` only when both accept the packet.
 
 1. Parses `packet_hex` with PyShark.
 2. Sends `packet_hex` to the local protocol server with the device validator.
@@ -104,9 +122,9 @@ Validation failures return `False`, giving apps that need both validators a sing
 
 ### Device Validator
 
-`validator.device_validator.validate(packet_hex)` sends `packet_hex` to a local protocol server and returns the raw response bytes when the response passes your callback.
+`validator.device_validator.validate(packet_hex, protocol="mbtcp")` sends `packet_hex` to a local protocol server and returns the raw response bytes when the response passes your callback.
 
-The callback passed to `Praetor(protocol, is_valid_response)` receives the response as a lowercase hex string:
+The callback passed to `Praetor(protocols, is_valid_response)` receives the response as a lowercase hex string:
 
 ```python
 def is_valid_response(response_hex: str) -> bool:
@@ -117,21 +135,23 @@ Use the callback to enforce protocol-specific expectations such as transaction I
 
 The device validator:
 
-- Starts a local Cursus server for the selected protocol.
+- Starts a local Cursus server for each configured protocol.
 - Connects to `localhost` on the protocol's custom port.
 - Sends TCP payloads with `sendall()` and UDP payloads with `send()`.
 - Reconnects the managed socket after `OSError`, then re-raises the original error so callers can decide whether to retry.
 - Raises `ValueError` when no response is received or when the callback rejects the response.
 
+When configured with multiple protocols, the device validator starts one local Cursus server per protocol. Each `validate(packet_hex, protocol="mbtcp")` call validates the packet against exactly one configured protocol.
+
 ### PyShark Validator
 
-`validator.pyshark_validator.validate(packet_hex, is_request=True)` wraps the payload in Ethernet/IP/TCP or Ethernet/IP/UDP layers, parses it with PyShark, and returns the parsed packet object.
+`validator.pyshark_validator.validate(packet_hex, is_request=True, protocol="mbtcp")` wraps the payload in Ethernet/IP/TCP or Ethernet/IP/UDP layers, parses it with PyShark, and returns the parsed packet object.
 
 Use `is_request=True` for client-to-server payloads and `is_request=False` for server-to-client payloads:
 
 ```python
-request_packet = validator.pyshark_validator.validate("000100000006010300000001", is_request=True)
-response_packet = validator.pyshark_validator.validate("000100000005010302000a", is_request=False)
+request_packet = validator.pyshark_validator.validate("000100000006010300000001", is_request=True, protocol="mbtcp")
+response_packet = validator.pyshark_validator.validate("000100000005010302000a", is_request=False, protocol="mbtcp")
 ```
 
 The PyShark validator:
@@ -143,11 +163,13 @@ The PyShark validator:
 - Raises `ValidatorWiresharkError` when Wireshark expert info marks the packet as malformed.
 - Raises `ValidatorError` when the expected protocol layer set is not present.
 
+When configured with multiple protocols, the PyShark validator keeps independent TCP sequence state for each protocol. Each `validate(packet_hex, is_request=True, protocol="s7comm")` call validates the packet against exactly one configured protocol.
+
 For independent packet conversations, create a fresh `Praetor` instance so sequence and acknowledgment state starts over.
 
 ## Supported Protocols
 
-`ProtocolInfo.from_name()` accepts either the protocol name or the enum member name, case-insensitively. For example, `mbtcp` and `MBTCP` both resolve to the Modbus TCP metadata.
+`ProtocolInfo.from_name()` accepts either the protocol name or the enum member name, case-insensitively. For example, `mbtcp` and `MBTCP` both resolve to the Modbus TCP metadata. Validator constructors accept a non-empty list of `ProtocolInfo` enum values.
 
 | Protocol argument | Enum name | Transport | Wireshark/default port | Local emulator port | Expected layers |
 | --- | --- | --- | ---: | ---: | --- |
@@ -182,12 +204,13 @@ Example:
 from praetor.exceptions.validator_error import ValidatorError
 from praetor.exceptions.validator_wireshark_error import ValidatorWiresharkError
 from praetor.praetord import Praetor
+from praetor.protocol_info import ProtocolInfo
 
 
-validator = Praetor("mbtcp", lambda response_hex: bool(response_hex))
+validator = Praetor([ProtocolInfo.MBTCP], lambda response_hex: bool(response_hex))
 
 try:
-    validator.pyshark_validator.validate("deadbeef", is_request=True)
+    validator.pyshark_validator.validate("deadbeef", is_request=True, protocol="mbtcp")
 except ValidatorWiresharkError as exc:
     print(f"Wireshark rejected request={exc.is_request}: {exc}")
 except ValidatorError as exc:
